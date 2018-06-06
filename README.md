@@ -1,3 +1,3 @@
 # PowerShell
 
-Script and Function library
+Script and Function library repository

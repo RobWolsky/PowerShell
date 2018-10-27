@@ -32,7 +32,7 @@ Steps performed by the script:
     4)Run one of the scripts with the -BatchUsers - this will bypass collecting permissions and jump straight into batching users using the permissinos output in the same directory as the script  
 
 =========================================
-Version: 07172017
+Version: 12122017
 
 Authors: 
 Alejandro Lopez - alejanl@microsoft.com
@@ -84,6 +84,12 @@ Make sure not to use in conjunction with the InputMailboxesCSV switch.
 Use this if you want to skip collecting permissions and only run Step 2 and Step 3. 
 Make sure you have the permissions output file in the same directory (Find-MailboxDelegates-Permissions.csv).
 
+.PARAMETER BatchUsersOnly
+Use this if you want to skip collecting permissions (step1) and creating a migration schedule (step 3). This won't require an active exchange session, but make sure you have the permissions output file in the same directory (Find-MailboxDelegates-Permissions.csv).
+
+.PARAMETER AccountResourceEnv
+Switch to run the script taking into account an Account/Resource environment
+
 .EXAMPLE
 #Export only SendOnBehalfTo and Send As permissions and Enumerate Groups for all mailboxes.  
 .\Find-MailboxDelegates.ps1 -SendOnBehalfTo -SendAs -EnumerateGroups
@@ -130,7 +136,8 @@ param(
     [string]$ExcludeGroupsCSV,
     [string]$ExchServerFQDN,
     [switch]$Resume,
-    [switch]$BatchUsers
+    [switch]$BatchUsers, 
+    [switch]$BatchUsersOnly
 )
 
 Begin{
@@ -213,11 +220,12 @@ Begin{
                     
 
                     #Variables
-                    Write-LogEntry -LogName:$Script:LogFile -LogEntryText "Get Permissions for: $UserEmail"
+                    Write-LogEntry -LogName:$Script:LogFile -LogEntryText "Get Permissions for: $($UserEmail)"
                     $CollectPermissions = New-Object System.Collections.Generic.List[System.Object] 
+                    $Error.Clear()
                     $Mailbox = Get-mailbox $UserEmail -EA SilentlyContinue
                     If(!$Mailbox){
-                        throw "Problem getting mailbox for $UserEmail : $_" 
+                        throw "Problem getting mailbox for $($UserEmail) : $($error)" 
                     }
 
                     #Enumerate Groups/Send As - moving this part outside of the function for faster processing
@@ -270,20 +278,21 @@ Begin{
                                     }
                                 }
                                 Else{
-                                    #$delegate = Get-Recipient -Identity $perm.user.tostring().replace(":\Calendar","") -ErrorAction SilentlyContinue
-                                    $delegate = Get-RecipientCustom $perm.user.adrecipient.primarysmtpaddress.tostring().replace(":\Calendar","")
+                                    If($perm.user.adrecipient.primarysmtpaddress -ne $null){                               
+                                        $delegate = Get-RecipientCustom $perm.user.adrecipient.primarysmtpaddress.tostring().replace(":\Calendar","")
 
-                                    If($mailbox.primarySMTPAddress -and $delegate.primarySMTPAddress){
-							            If(-not ($mailbox.primarySMTPAddress.ToString() -eq $delegate.primarySMTPAddress.ToString())){
-                                            If($ExcludedServiceAccts){
-                                                if(-not ($ExcludedServiceAccts -contains $delegate.primarySMTPAddress.tostring() -or $ExcludedServiceAccts -contains $mailbox.primarySMTPAddress.ToString())){
+                                        If($mailbox.primarySMTPAddress -and $delegate.primarySMTPAddress){
+                                            If(-not ($mailbox.primarySMTPAddress.ToString() -eq $delegate.primarySMTPAddress.ToString())){
+                                                If($ExcludedServiceAccts){
+                                                    if(-not ($ExcludedServiceAccts -contains $delegate.primarySMTPAddress.tostring() -or $ExcludedServiceAccts -contains $mailbox.primarySMTPAddress.ToString())){
+                                                        Write-LogEntry -LogName:$Script:LogFile -LogEntryText "Found permission : CalendarFolder : $($delegate.primarySMTPAddress.ToString())"
+                                                        $CollectPermissions.add([pscustomobject]@{Mailbox = $Mailbox.PrimarySMTPAddress; User = $delegate.primarySMTPAddress.ToString(); AccessRights = "Calendar Folder"})
+                                                    }
+                                                }
+                                                Else{
                                                     Write-LogEntry -LogName:$Script:LogFile -LogEntryText "Found permission : CalendarFolder : $($delegate.primarySMTPAddress.ToString())"
                                                     $CollectPermissions.add([pscustomobject]@{Mailbox = $Mailbox.PrimarySMTPAddress; User = $delegate.primarySMTPAddress.ToString(); AccessRights = "Calendar Folder"})
                                                 }
-                                            }
-                                            Else{
-                                                Write-LogEntry -LogName:$Script:LogFile -LogEntryText "Found permission : CalendarFolder : $($delegate.primarySMTPAddress.ToString())"
-                                                $CollectPermissions.add([pscustomobject]@{Mailbox = $Mailbox.PrimarySMTPAddress; User = $delegate.primarySMTPAddress.ToString(); AccessRights = "Calendar Folder"})
                                             }
                                         }
                                     }
@@ -291,7 +300,7 @@ Begin{
                             }
                         }
                         If($Error){
-                            Write-LogEntry -LogName:$Script:LogFile -LogEntryText "$($Mailbox.PrimarySMTPAddress) : Check CalendarFolder  : $Error"
+                            Write-LogEntry -LogName:$Script:LogFile -LogEntryText "MBX=$($Mailbox.PrimarySMTPAddress) PERM=CalendarFolder ERROR=$($error[0].ToString()) POSITION=$($error[0].InvocationInfo.PositionMessage)"
                         }
                     }
 
@@ -350,7 +359,7 @@ Begin{
                         }
 
                         If($Error){
-                            Write-LogEntry -LogName:$Script:LogFile -LogEntryText "$($Mailbox.PrimarySMTPAddress) : Check FullAccess : $Error"
+                            Write-LogEntry -LogName:$Script:LogFile -LogEntryText "MBX=$($Mailbox.PrimarySMTPAddress) PERM=FullAccess ERROR=$($error[0].ToString()) POSITION=$($error[0].InvocationInfo.PositionMessage)"
                         }
                     }
 
@@ -418,7 +427,7 @@ Begin{
                         }
 
                         If($Error){
-                            Write-LogEntry -LogName:$Script:LogFile -LogEntryText "$($Mailbox.PrimarySMTPAddress) : Check SendAs  : $Error"
+                            Write-LogEntry -LogName:$Script:LogFile -LogEntryText "MBX=$($Mailbox.PrimarySMTPAddress) PERM=SendAs ERROR=$($error[0].ToString()) POSITION=$($error[0].InvocationInfo.PositionMessage)"
                         }
                     }
 
@@ -449,7 +458,7 @@ Begin{
                         }
                         
                         If($Error){
-                            Write-LogEntry -LogName:$Script:LogFile -LogEntryText "$($Mailbox.PrimarySMTPAddress) : Check SendOnBehalfTo  : $Error"
+                            Write-LogEntry -LogName:$Script:LogFile -LogEntryText "MBX=$($Mailbox.PrimarySMTPAddress) PERM=SendOnBehalfTo ERROR=$($error[0].ToString()) POSITION=$($error[0].InvocationInfo.PositionMessage)"
                         }
                     }
                     
@@ -479,17 +488,18 @@ Begin{
                 }
                 catch{
                     $updateXML = [System.Xml.XmlDocument](Get-Content $ProgressXMLFile)
-                    $node = $updateXML.Mailboxes.Mailbox | ?{$_.Name -eq $Mailbox.PrimarySMTPAddress}
+                    $node = $updateXML.Mailboxes.Mailbox | ?{$_.Name -eq $UserEmail}
                     If($node -ne $null){
                         $node.Progress = "Failed"
                     }
                     $updateXML.save($ProgressXMLFile)
-                    Write-LogEntry -LogName:$Script:LogFile -LogEntryText "Error: $($Mailbox.PrimarySMTPAddress) : $_ "
+                    Write-LogEntry -LogName:$Script:LogFile -LogEntryText "MBX=$($UserEmail) ERROR=$($_.exception.message) POSITION=$($_.InvocationInfo.Line) $($_.InvocationInfo.PositionMessage)"
                 }
             }
 
         Function ConnectTo-Exchange ($ExchServerFQDN) {
             #Connect to Exchange
+			<#
             if (Test-Path $env:ExchangeInstallPath\bin\RemoteExchange.ps1){
 	            . $env:ExchangeInstallPath\bin\RemoteExchange.ps1 | out-null
                 
@@ -504,9 +514,10 @@ Begin{
                 Write-LogEntry -LogName:$LogFile -LogEntryText "Exchange Server management tools are not installed on this computer." -ForegroundColor Red 
                 EXIT
             }
+			#>
 
             #Method #2 to connect using remote powershell
-            <#
+            
                 If($ExchServerFQDN){
                     try{
                         ""
@@ -757,6 +768,19 @@ Begin{
                 }
             }
 
+        Function CleanUp-PreviousRun() {
+            try{
+                If(test-path $PermsOutputFile){Remove-item -path $PermsOutputFile}
+                If(test-path $BatchesFile){Remove-item -path $BatchesFile} 
+                If(test-path $MigrationScheduleFile){Remove-item -path $MigrationScheduleFile}
+                #$ProgressXMLFile doesn't have to be wiped since this is recreated every time
+                Write-LogEntry -LogName:$LogFile -LogEntryText "Successfully cleaned up previous run results."
+            }
+            catch{
+                Write-LogEntry -LogName:$LogFile -LogEntryText "Unable to clean up csv outputs from previous run. This needs to be done to avoid mixed results. ERROR=$($_) " -ForegroundColor Red
+                exit
+            }
+        }
         #endregion functions
 
         #Script Variables
@@ -768,7 +792,7 @@ Begin{
         $BatchesFile = "$scriptPath\Find-MailboxDelegates-Batches.csv"
         $MigrationScheduleFile = "$scriptPath\Find-MailboxDelegates-Schedule.csv"
         $ProgressXMLFile = "$scriptPath\Find-MailboxDelegates-Progress.xml"
-        $Version = "07172017"
+        $Version = "12122017"
         $computer = $env:COMPUTERNAME
         $user = $env:USERNAME
 
@@ -776,7 +800,7 @@ Begin{
         $ErrorActionPreference = "SilentlyContinue"
 
         ""
-        Write-LogEntry -LogName:$LogFile -LogEntryText "User: $user Computer: $computer Version: $Version" -foregroundcolor Yellow
+        Write-LogEntry -LogName:$LogFile -LogEntryText "User: $user Computer: $computer ScriptVersion: $Version PowershellVersion: $($PSVersionTable.PSVersion.Major)" -foregroundcolor Yellow
         ""
         Write-LogEntry -LogName:$LogFile -LogEntryText "Script parameters passed: $($PSBoundParameters.GetEnumerator())" 
         ""
@@ -787,11 +811,18 @@ Begin{
             throw "Powershell V3+ is required. If you're running from Exchange Shell, it may be defaulting to PS2.0. Run 'powershell -version 3' and re-run the script."
         }
 
+        #Run only the batch users step if the switch BatchUsersOnly switch has been added 
+        If($BatchUsersOnly){
+            Write-LogEntry -LogName:$LogFile -LogEntryText "Running only Step #2: Batch Users" -ForegroundColor Yellow
+            Create-Batches -InputPermissionsFile $PermsOutputFile
+            exit     
+        }
+
         #Check switches provided are acceptable
-        If($BatchUsers -and ($FullAccess -or $SendOnBehalfTo -or $Calendar -or $SendAs -or $InputMailboxesCSV -or $EnumerateGroups -or $ExcludeServiceAccts -or $ExcludeGroups -or $Resume)){
+        If($BatchUsers -and ($FullAccess -or $SendOnBehalfTo -or $Calendar -or $SendAs -or $InputMailboxesCSV -or $EnumerateGroups -or $ExcludeServiceAccts -or $ExcludeGroups -or $Resume -or $AccountResourceEnv)){
             throw "BatchUsers can't be combined with these other switches."
         }
-        If(!$FullAccess -and !$SendOnBehalfTo -and !$Calendar -and !$SendAs -and !$BatchUsers){
+        If(!$FullAccess -and !$SendOnBehalfTo -and !$Calendar -and !$SendAs -and !$BatchUsers -and !$BatchUsersOnly){
             throw "Include the switches for the permissions you want to query on. Check the read me file for more details."
         }
 
@@ -801,7 +832,11 @@ Begin{
             ConnectTo-Exchange $ExchServerFQDN | Out-Null
             ""
         }
-        
+        $exchserversession = get-pssession | ?{$_.configurationname -eq "Microsoft.Exchange"} | select -expandproperty computername 
+        $exchangeversion = get-exchangeserver $exchserversession | select -expandproperty AdminDisplayVersion
+        Write-LogEntry -LogName:$LogFile -LogEntryText "ExchangeServerName: $($exchserversession) ExchangeServerVersion: $($exchangeversion)" 
+        ""
+
         #Open connection to AD - this will be used to enumerate groups and collect Send As permissions
         If(($EnumerateGroups -eq $true) -or ($SendAs -eq $true)){ 
             $dse = [ADSI]"LDAP://Rootdse"
@@ -813,12 +848,20 @@ Begin{
             $right = $ext.psbase.Children | ? { $_.DisplayName -eq $permission }
         }
 
+        #Check if re-running the script without resume. Clean outputs from previous run to prevent data corruption
+        If((!$Resume) -and (test-path $PermsOutputFile)){
+            Write-LogEntry -LogName:$LogFile -LogEntryText "Clean up previous run to avoid mixed results" -ForegroundColor Gray
+            CleanUp-PreviousRun
+        }
+
         #Set scope to find objects in other domains
         Set-AdServerSettings -ViewEntireForest $True
 
         #Used for Acccount/Resource models
-        Write-LogEntry -LogName:$LogFile -LogEntryText "Creating Mailboxes lookup table" -ForegroundColor Gray 
-        $Script:mailboxesLookup = Get-Mailbox -ResultSize Unlimited
+        If($AccountResourceEnv){
+            Write-LogEntry -LogName:$LogFile -LogEntryText "Creating Mailboxes lookup table for Account/Resource Environment" -ForegroundColor Gray 
+            $Script:mailboxesLookup = Get-Mailbox -ResultSize Unlimited
+        }
 
         #Get Mailboxes
         If($Resume){
@@ -864,7 +907,12 @@ Begin{
                 $xmlDoc.save($ProgressXMLFile)
             }
             Else{
-                $ListOfMailboxes = $mailboxesLookup | select PrimarySMTPAddress
+                If($mailboxesLookup){
+                    $ListOfMailboxes = $mailboxesLookup | select PrimarySMTPAddress
+                }
+                Else{
+                    $ListOfMailboxes = Get-Mailbox -ResultSize Unlimited | select PrimarySMTPAddress
+                }
 
                 #write to xml for progress tracking
                 [xml]$xmlDoc = New-Object System.Xml.XmlDocument

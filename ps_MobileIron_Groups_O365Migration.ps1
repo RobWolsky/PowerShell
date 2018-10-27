@@ -1,10 +1,12 @@
-﻿# FileName:  ps_MobileIron_Groups_O365Migration.ps1
+﻿
+
+# FileName:  ps_MobileIron_Groups_O365Migration.ps1
 #----------------------------------------------------------------------------
 # Script Name: [Remove MDM users from Main group and add to O365 group]
 # Created: [12/18/2017]
 # Author: Rob Wolsky
 # Company: NovaTech Group
-# Email: rob.wolsky@novatechgroup.onmicrosoft.com
+# Email: rob.wolsky@ntekcloud.com
 # Requirements: CSV file containing users to search by CN or SamAccountName
 # Requirements: List relevant identities in c:\Temp\batch_users.csv (header Name)
 # Requirements: 
@@ -32,7 +34,7 @@ $count = 0
 ForEach ($User in [Array] $identities)
 {
 $a = Get-ADUser $User.Name -Properties MemberOf
- if (($a.MemberOf | Out-String).Contains("MDM_Users_Main")) {
+  if (($a.MemberOf | Out-String).Contains("MDM_Users_Main")) {
 
     Remove-ADGroupMember MDM_Users_Main $a.Name -Confirm:$false
     Add-ADGroupMember mdm_users_o365 $a.Name -Confirm:$false

@@ -45,19 +45,18 @@
 
 ###                      Edit the six variables below with your details                          ###
 
+$Tenant = "iff"
 
-$Tenant = "novatech group"
+$LocalExchServer = "iffandhyb01.mail.global.iff.com"
+$Local2010Server = "iffandmbx01.mail.global.iff.com"
 
-$LocalExchServer = "mail.ntekcloud.com"
-$Local2010Server = "oldmail.ntekcloud.com"
+$LocalCredential = Get-Credential "global\rxw1401_e"
 
-$LocalCredential = Get-Credential "ntekcloud\robwolsky"
+$CloudCred = Get-credential "rob.wolsky@iff.com"
 
-$CloudCred = Get-credential "rob.wolsky@ntekcloud.com"
+$AzureADConnect = "fed.iff.com"
 
-$AzureADConnect = "fed.ntekcloud.com"
-
-$AzureADCred = "rob.wolsky@ntekcloud.com"
+$AzureADCred = "global\rxw1401_e"
 
 
 #####################################################################################################
@@ -85,17 +84,17 @@ Set-EXLAdServerSettings -ViewEntireForest $True
 
 ###   Exchange Online
 $EXOSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $CloudCred -Authentication Basic -AllowRedirection
-Import-PSSession $EXOSession â€“AllowClobber -Prefix EXO
+Import-PSSession $EXOSession –AllowClobber -Prefix EXO
 
 
 ### Exchange Online Protection
 $EOPSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.protection.outlook.com/powershell-liveid/ -Credential $CloudCred -Authentication Basic -AllowRedirection
-Import-PSSession $EOPSession â€“AllowClobber -Prefix EOP
+Import-PSSession $EOPSession –AllowClobber -Prefix EOP
 
 
 ### Compliance Center
 $ccSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri "https://ps.compliance.protection.outlook.com/powershell-liveid/" -Credential $CloudCred -Authentication "Basic" -AllowRedirection
-Import-PSSession $ccSession â€“AllowClobber -Prefix CC
+Import-PSSession $ccSession –AllowClobber -Prefix CC
 
 
 ### Azure Active Directory Rights Management
@@ -119,15 +118,16 @@ Connect-SPOService -Url "https://$($Tenant)-admin.sharepoint.com" -Credential $C
 
 ### Skype Online
 Import-Module SkypeOnlineConnector
-$SkypeSession = New-CsOnlineSession -Credential $CloudCred â€“OverrideAdminDomain "iff.onmicrosoft.com" 
-Import-PSSession $SkypeSession â€“AllowClobber
+#$SkypeSession = New-CsOnlineSession -Credential $CloudCred –OverrideAdminDomain "iff.onmicrosoft.com" 
+$SkypeSession = New-CsOnlineSession -UserName "rob.wolsky@iff.com" 
+Import-PSSession $SkypeSession –AllowClobber
 
 ### Skype/Lync Local
 #$LocalCredential = Get-Credential 
 $LyncSession = New-PSSession -ConnectionUri "https://iffandfe04.mail.global.iff.com/PowerShell" -Credential $LocalCredential
-Import-PSSession $LyncSession â€“AllowClobber
+Import-PSSession $LyncSession –AllowClobber
 
-$Lync = New-PSSession -ComputerName "iffandbk01.mail.global.iff.com"
+$Lync = New-PSSession -ComputerName "iffandfe04.mail.global.iff.com"
 Invoke-Command -Session $Lync {Import-Module Lync}
 Import-PSSession -Session $Lync -Module Lync
 
@@ -136,6 +136,10 @@ Connect-AzureAD -Credential $CloudCred
 
 
 ### Azure AD Connect (DirSync)
-$ADConnectSessionÂ =Â New-PSSessionÂ -ComputernameÂ $AzureADConnect -Credential $AzureADCred
-Invoke-CommandÂ -SessionÂ $ADConnectSessionÂ {Import-ModuleÂ ADSync}
-Import-PSSessionÂ -SessionÂ $ADConnectSessionÂ -ModuleÂ ADSyncÂ 
+$ADConnectSession = New-PSSession -Computername $AzureADConnect -Credential $AzureADCred
+Invoke-Command -Session $ADConnectSession {Import-Module ADSync}
+Import-PSSession -Session $ADConnectSession -Module ADSync 
+
+### Connect to Teams
+Import-Module MicrosoftTeams
+Connect-MicrosoftTeams -Credential $CloudCred

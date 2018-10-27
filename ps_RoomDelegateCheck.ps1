@@ -4,7 +4,7 @@
 # Created: [08/01/2017]
 # Author: Rob Wolsky
 # Company: NovaTech Group
-# Email: rob.wolsky@ntekcloud.com
+# Email: rob.wolsky@novatechgroup.onmicrosoft.com
 # Requirements: 
 # Requirements: 
 # Requirements: 
@@ -33,36 +33,22 @@ $arrResults = @()
 
 ForEach ($aduser in [Array] $identities)
 {
-#Is the user on-prem on in the cloud
-$where = Get-ADUser -Identity $aduser -Properties DisplayName, msExchRecipientTypeDetails
-#Is the user a member of an Editors group
-$groups = Get-ADUser -Identity $aduser -Properties MemberOf | Select -ExpandProperty MemberOf 
-$groups | Where {($_ | Out-String) -like "*Editors*"}
-if ($where.msExchRecipientTypeDetails -eq 1) #user is on premise
-    {
-    Write-Host -ForegroundColor Green -BackgroundColor Black "Processing on-premise user: " $where.DisplayName $where.UserPrincipalName $aduser
-    Write-Host -ForegroundColor Green -BackgroundColor Black "Calendar"
-    Get-EXLMailboxFolderPermission -identity $aduser":\calendar" | Select User, AccessRights
+    $calendar = Get-EXLMailboxFolderPermission -identity $aduser":\calendar" 
     #Get-E10ADPermission -Identity $aduser | ? {$_.ExtendedRights} | Select User,Identity,ExtendedRights | FT
-    Write-Host -ForegroundColor Green -BackgroundColor Black "Extended Rights:"
-    Get-EXLADPermission -Identity $aduser | ? {$_.ExtendedRights} | Select User, ExtendedRights | FT
-    Write-Host -ForegroundColor Green -BackgroundColor Black "Send on Behalf:"
-    Get-EXLMailbox $aduser | ? {$_.GrantSendOnBehalfTo} | Select -ExpandProperty GrantSendOnBehalfTo | FT
+    $extended = Get-EXLADPermission -Identity $aduser | ? {$_.ExtendedRights -and ($_.IsInherited -eq $false) -and ($_.User -notlike “NT AUTHORITY\SELF”) -and ($_.User -notlike "*S-1-5*") -and ($_.User -notlike "*Everyone*")} | Select User,Identity,ExtendedRights | FT
+    $sendon = Get-EXLMailbox $aduser | ? {$_.GrantSendOnBehalfTo} | Select DisplayName, Name, GrantSendOnBehalfTo | FT
     #get-EXLmailbox $aduser | Get-EXLMailboxPermission | Select User,AccessRights | FT
-    Write-Host -ForegroundColor Green -BackgroundColor Black "Full Access:"
-    get-EXLmailbox $aduser | Get-EXLMailboxPermission | ? {($_.AccessRights -like “*FullAccess*”) -and ($_.IsInherited -eq $false) -and ($_.User -notlike “NT AUTHORITY\SELF”) -and ($_.User -notlike "S-1-5*") -and ($_.User -notlike $Mailbox.PrimarySMTPAddress)} | Select User,AccessRights | FT
-    }
-else
-    {
-    Write-Host -ForegroundColor Green -BackgroundColor Black "Processing online user: " $where.DisplayName $where.UserPrincipalName $aduser
-    Get-EXOMailboxFolderPermission -identity $aduser":\calendar"
-    Get-EXLADPermission -Identity $aduser | ? {$_.ExtendedRights} | Select User,Identity,ExtendedRights | FT
-    Get-EXOMailbox $aduser | ? {$_.GrantSendOnBehalfTo} | Select DisplayName, Name, GrantSendOnBehalfTo | FT
-    #get-EXOmailbox $aduser | Get-EXOMailboxPermission | Select User,AccessRights | FT
-    get-EXOmailbox $aduser | Get-EXOMailboxPermission | ? {($_.AccessRights -like “*FullAccess*”) -and ($_.IsInherited -eq $false) -and ($_.User -notlike “NT AUTHORITY\SELF”) -and ($_.User -notlike "S-1-5*") -and ($_.User -notlike $Mailbox.PrimarySMTPAddress)} | Select User,AccessRights | FT
-    }
+    $access = get-EXLmailbox $aduser | Get-EXLMailboxPermission | ? {($_.AccessRights -like “*FullAccess*”) -and ($_.IsInherited -eq $false) -and ($_.User -notlike “NT AUTHORITY\SELF”) -and ($_.User -notlike "S-1-5*") -and ($_.User -notlike $Mailbox.PrimarySMTPAddress)} | Select User,AccessRights | FT
     
-
+    Write-Host -ForegroundColor Green -BackgroundColor Black "Processing Resource: " $aduser
+    #Write-Host -ForegroundColor Green -BackgroundColor Black "Calendar"
+    $calendar
+    #Write-Host -ForegroundColor Green -BackgroundColor Black "Extended Rights:"
+    $extended
+    #Write-Host -ForegroundColor Green -BackgroundColor Black "Send on Behalf:"
+    $sendon
+    #Write-Host -ForegroundColor Green -BackgroundColor Black "Full Access:"
+    $access
 
 
 

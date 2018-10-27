@@ -210,8 +210,8 @@ get-EXLmailbox "Palm Oil" | Get-EXLMailboxPermission | ? {($_.AccessRights -like
 get-adgroup -Filter * -SearchBase "OU=exGroups,OU=Exchange,OU=IFF,DC=global,DC=iff,DC=com" -SearchScope Subtree | ? {$_.GroupScope -eq "Global"} #| Select Name, GroupCategory, GroupScope | Sort Name | Out-GridView
 get-adgroup -Identity TilburgFlavorsPackingRoomEditors | Set-ADGroup -GroupScope Universal
 
-Enable-EXLDistributionGroup -identity TilburgFlavorsPackingRoomEditors
-Get-EXLDistributionGroup -identity PalmOilEditors | Set-EXLDistributionGroup -HiddenFromAddressListsEnabled:$True
+Enable-EXLDistributionGroup -identity TechInfoUnileverEditors
+Get-EXLDistributionGroup -identity TechInfoUnileverEditors | Set-EXLDistributionGroup -HiddenFromAddressListsEnabled:$True
 
 # Office 365 Shared Group settings prior to migration
 $a = gc C:\Temp\shared.txt
@@ -222,3 +222,36 @@ $a | % {Get-EXLDistributionGroup -identity $_ | Set-EXLDistributionGroup -Hidden
 #Fix Default Calendar permissions
 Add-EXLMailboxFolderPermission -Identity "RDNJ_GardenRm:\Calendar" -User "Calendar_Detail" -AccessRights LimitedDetails
 Set-EXLMailboxFolderPermission -Identity "RDNJ_GardenRm:\Calendar" -User Default -AccessRights AvailabilityOnly
+
+#Policy Checkbox is checked
+Get-EXLMailbox -Filter * -ResultSize Unlimited | Select DisplayName, PrimarySMTPAddress, EmailAddressPolicyEnabled | Out-GridView
+
+#Skype Rework IFF
+$Users | % {get-aduser -Identity $_ -Properties DisplayName, Mail | Select DisplayName, Mail | Sort-Object DisplayName | Export-Csv c:\temp\license.csv -NoTypeInformation -Append}
+
+$users | % {Get-MsolUser -UserPrincipalName $_ } | ? {($_.Licenses | Out-String) -notlike "*PACK*"} | % {Set-MsolUserLicense -UserPrincipalName $_.UserPrincipalName -AddLicenses "IFF:STANDARDPACK"}
+
+get-exohostedcontentfilterpolicy | Select -ExpandProperty AllowedSenders 
+
+#DirSync Status
+Get-MSOlUser -ALL | Select-Object UserPrincipalName, LastDirSyncTime, ValidationStatus, DirSyncProvisioningErrors | Out-GridView
+
+
+#Conference Policies
+Grant-CsConferencingPolicy -identity "Abigail Dolan" -PolicyName BposSAllModalityNoRec
+get-csonlineuser | Select DisplayName, ConferencingPolicy | Out-GridView
+get-csonlineuser | % {Grant-CsConferencingPolicy -PolicyName BposSAllModalityNoRec}
+
+#Client Policies
+Set-CsClientPolicy -Identity Global -EnableIMAutoArchiving $False -EnableCallLogAutoArchiving $False
+Set-CsClientPolicy -Identity Global -DisableSavingIM $True
+
+#Run retention policies/tags on a specific mailbox
+Start-EXOManagedFolderAssistant -Identity rob.wolsky@iff.com
+
+
+#find proxy addresses not in tenant
+get-aduser -Filter * -Properties ProxyAddresses | Select -ExpandProperty ProxyAddresses | ? {($_ -notlike "*iff*") -and ($_ -notlike "*X500*") -and ($_ -notlike "*tastepoint*") -and ($_ -notlike "*powderpure*")}
+
+#remove automapping of shared mailbox
+Add-MailboxPermission -Identity johnsmith@contoso.onmicrosoft.com -User admin@contoso.onmicrosoft.com -AccessRights FullAccess -AutoMapping:$false

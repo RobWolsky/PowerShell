@@ -4,7 +4,7 @@
 # Created: [08/01/2017]
 # Author: Rob Wolsky
 # Company: NovaTech Group
-# Email: rob.wolsky@novatechgroup.onmicrosoft.com
+# Email: rob.wolsky@ntekcloud.com
 # Requirements: 
 # Requirements: 
 # Requirements: 
@@ -25,7 +25,7 @@
 
 
 #Populate Identity Array
-[Array] $identities = get-aduser -Filter "*" -Properties DisplayName, Manager, Mail, physicalDeliveryOfficeName, iffRegionName, iffRegionCode, iffCountryCode, iffCityCode, msExchRecipientTypeDetails, msRTCSIP-DeploymentLocator | Select DisplayName, Name, UserPrincipalName, Mail, physicalDeliveryOfficeName, iffRegionName, iffRegionCode, iffCountryCode, iffCityCode, msExchRecipientTypeDetails, msRTCSIP-DeploymentLocator, Manager #| ? {$_.msExchRecipientTypeDetails -ne 2147483648}
+[Array] $identities = get-aduser -Filter "*" -Properties DisplayName, Manager, Enabled, LastLogonDate, Mail, physicalDeliveryOfficeName, iffRegionName, iffRegionCode, iffCountryCode, iffCityCode, msExchRecipientTypeDetails, msRTCSIP-DeploymentLocator, msRTCSIP-PrimaryUserAddress | Select DisplayName, Name, UserPrincipalName, Mail, LastLogonDate, Enabled, physicalDeliveryOfficeName, iffRegionName, iffRegionCode, iffCountryCode, iffCityCode, msExchRecipientTypeDetails, msRTCSIP-DeploymentLocator, msRTCSIP-PrimaryUserAddress, Manager #| ? {$_.msExchRecipientTypeDetails -ne 2147483648}
 
 #Initialize array variable used to store records for output
 
@@ -48,6 +48,10 @@ $manager = Get-ADUser -Identity $aduser.Manager -Properties DisplayName
 
     $objEX | Add-Member -MemberType NoteProperty -Name SMTP -Value $aduser.Mail
     
+    $objEX | Add-Member -MemberType NoteProperty -Name LastLogin -Value $aduser.LastLogonDate
+        
+    $objEX | Add-Member -MemberType NoteProperty -Name IsEnabled -Value $aduser.Enabled
+        
     $objEX | Add-Member -MemberType NoteProperty -Name Office -Value $aduser.physicalDeliveryOfficeName
         
     $objEX | Add-Member -MemberType NoteProperty -Name Region -Value $aduser.iffRegionName
@@ -61,6 +65,8 @@ $manager = Get-ADUser -Identity $aduser.Manager -Properties DisplayName
     $objEX | Add-Member -MemberType NoteProperty -Name Type -Value $aduser.msExchRecipientTypeDetails
 
     $objEX | Add-Member -MemberType NoteProperty -Name SIPLoc -Value $aduser.'msRTCSIP-DeploymentLocator'
+
+    $objEX | Add-Member -MemberType NoteProperty -Name SIPAddress -Value $aduser.'msRTCSIP-PrimaryUserAddress'
 
     $objEX | Add-Member -MemberType NoteProperty -Name ManagerDisplay -Value $manager.DisplayName
 

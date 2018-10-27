@@ -4,7 +4,7 @@
 # Created: [03/20/2018]
 # Author: Rob Wolsky
 # Company: NovaTech Group
-# Email: rob.wolsky@novatechgroup.onmicrosoft.com
+# Email: rob.wolsky@ntekcloud.com
 # Requirements: 
 # Requirements: 
 # Requirements: 
@@ -25,7 +25,7 @@
 
 
 #Populate Mailbox Array
-[Array] $mailboxes = get-exlmailbox -ResultSize Unlimited
+[Array] $mailboxes = get-e10mailbox -ResultSize Unlimited
 
 #Initialize array variable used to store records for output
 
@@ -37,8 +37,8 @@ ForEach ($mailuser in [Array] $mailboxes)
 $statistics = ""
 $folders = ""
 #trap { 'User: '+$mailuser.DisplayName+' has an issue'; continue }
-$statistics = Get-exlmailboxstatistics -Identity $mailuser.SamAccountName | Select DisplayName, LastLoggedOnUserAccount, LastLogonTime, LastLogoffTime, ItemCount, TotalItemSize
-$folders = Get-EXLMailboxFolderStatistics -Identity $mailuser.SamAccountName | Where {$_.Name -match “Inbox|Sent Items|Deleted Items”} | Select Name, ItemsInFolder
+$statistics = GET-E10mailboxstatistics -Identity $mailuser.SamAccountName | Select DisplayName, LastLoggedOnUserAccount, LastLogonTime, LastLogoffTime, ItemCount, TotalItemSize
+$folders = Get-E10MailboxFolderStatistics -Identity $mailuser.SamAccountName | Where {$_.Name -match “Inbox|Sent Items|Deleted Items”} | Select Name, ItemsInFolder
     $objEX = New-Object -TypeName PSObject
 
     $objEX | Add-Member -MemberType NoteProperty -Name Display -Value $mailuser.DisplayName

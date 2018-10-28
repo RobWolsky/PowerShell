@@ -243,3 +243,7 @@ get-aduser -Filter * -Properties ProxyAddresses | Select -ExpandProperty ProxyAd
 
 #remove automapping of shared mailbox
 Add-MailboxPermission -Identity johnsmith@contoso.onmicrosoft.com -User admin@contoso.onmicrosoft.com -AccessRights FullAccess -AutoMapping:$false
+
+#Maximum send and receive size settings
+Get-EXOMailboxPlan | fl name,maxsendsize,maxreceivesize,isdefault
+Get-EXOMailbox -Resultsize Unlimited | Set-EXOMailbox -MaxReceiveSize 150MB -MaxSendSize 150MB

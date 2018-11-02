@@ -1,12 +1,12 @@
 # Specifies the URL for your organization's SPO admin service
-$AdminURI = "https://your organization name-admin.sharepoint.com"
+$AdminURI = "https://iff-admin.sharepoint.com"
 
 # Specifies the User account for an Office 365 global admin in your organization
-$AdminAccount = "global admin account"
-$AdminPass = "password for global admin account"
+$AdminAccount = "Rob.Wolsky@iff.com"
+$AdminPass = "@Armati10"
 
 # Specifies the location where the list of URLs should be saved
-$LogFile = 'C:\Users\youralias\Desktop\ListOfMysites.txt'
+$LogFile = 'C:\TEMP\ListOfMysites.txt'
 
 # Begin the process
 $loadInfo1 = [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint.Client")

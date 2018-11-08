@@ -247,3 +247,9 @@ Add-MailboxPermission -Identity johnsmith@contoso.onmicrosoft.com -User admin@co
 #Maximum send and receive size settings
 Get-EXOMailboxPlan | fl name,maxsendsize,maxreceivesize,isdefault
 Get-EXOMailbox -Resultsize Unlimited | Set-EXOMailbox -MaxReceiveSize 150MB -MaxSendSize 150MB
+
+#Find all soft-deleted mailboxes in Office365
+Get-EXOMailbox -SoftDeletedMailbox | Select-Object DisplayName, Name,ExchangeGuid | Sort DisplayName
+
+#Check Federation Settings - should be set for Okta
+Get-MsolDomainFederationSettings -DomainName iff.com

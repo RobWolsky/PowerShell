@@ -253,3 +253,4 @@ Get-EXOMailbox -SoftDeletedMailbox | Select-Object DisplayName, Name,ExchangeGui
 
 #Check Federation Settings - should be set for Okta
 Get-MsolDomainFederationSettings -DomainName iff.com
+Set-MsolDomainAuthentication -DomainName iff.com

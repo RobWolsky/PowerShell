@@ -133,7 +133,9 @@ Import-PSSession -Session $Lync -Module Lync
 
 ### Azure AD v2.0
 #Connect-AzureAD -Credential $CloudCred
-Connect-AzureAD -TenantId $Tenant -Confirm
+#Connect-AzureAD -TenantId $Tenant -Confirm
+
+Connect-AzureAD -AccountId rob.wolsky@iff.com
 
 
 ### Azure AD Connect (DirSync)

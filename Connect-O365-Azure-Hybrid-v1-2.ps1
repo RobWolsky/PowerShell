@@ -12,8 +12,8 @@
 ###     Version 1.1 - 16/05/2017                                                                                                 ###
 ###     Revision -                                                                                                               ###
 ###               v1.0  14/05/2017     Initial script                                                                            ###
-###               v1.1  18/05/2017     Added Support Guides URL and TechNet download link - Removed message from cred pop-up     ### 
-###               v1.2  30/05/2017     Added connection to Azure AD Connect (DirSync) Server                                     ###  	
+###               v1.1  18/05/2017     Added Support Guides URL and TechNet download link - Removed message from cred pop-up     ###
+###               v1.2  30/05/2017     Added connection to Azure AD Connect (DirSync) Server                                     ###
 ###                                                                                                                              ###
 ###     Guideance on Remote Azure AD Sync - https://community.spiceworks.com/topic/724324-invoke-command-import-module           ###
 ###                                                                                                                              ###
@@ -24,18 +24,18 @@
 
 ####  Notes for Usage  ##############################################################################
 #                                                                                                   #
-#  Ensure you update the six variables in the script section                                        #                                          
+#  Ensure you update the six variables in the script section                                        #
 #  - $Tenant - Edit this with your Office 365 tenant name                                           #
 #  - $LocalExchServer - Edit this with your local Exchange CAS Server name                          #
-#  - $LocalCredential - Edit this with your domain name and Exchange - AD adminstrator account      # 
+#  - $LocalCredential - Edit this with your domain name and Exchange - AD adminstrator account      #
 #  - $CloudCred - Enter your Office 365 user name, including the tenant                             #
 #  - $AzureADConnect - Enter the FQDN of your Azure AD Connect server                               #
 #  - $AzureADCred - Enter the credentials of your Azure AD Connect account (internal admin)         #
 #                                                                                                   #
 #  Support Guides -                                                                                 #
 #   - Pre-Requisites - Configuring your PC                                                          #
-#   - - -  http://www.365admin.com.au/2017/05/how-to-configure-your-desktop-pc-for.html             #      
-#   - Usage Guide - Editing the connection script                                                   # 
+#   - - -  http://www.365admin.com.au/2017/05/how-to-configure-your-desktop-pc-for.html             #
+#   - Usage Guide - Editing the connection script                                                   #
 #   - - - http://www.365admin.com.au/2017/05/how-to-connect-to-hybrid-exchange.html                 #
 #                                                                                                   #
 #####################################################################################################
@@ -74,12 +74,12 @@ Import-Module ActiveDirectory
 ###   Exchange 2010 Local
 $E10Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri http://$($Local2010Server)/PowerShell/ -Authentication Kerberos -Credential $LocalCredential
 Import-PSSession $E10Session -AllowClobber -Prefix E10
-Set-E10AdServerSettings -ViewEntireForest $True                                 
+Set-E10AdServerSettings -ViewEntireForest $True
 
 ###   Exchange Local
 $EXLSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri http://$($LocalExchServer)/PowerShell/ -Authentication Kerberos -Credential $LocalCredential
 Import-PSSession $EXLSession -AllowClobber -Prefix EXL
-Set-EXLAdServerSettings -ViewEntireForest $True                                 
+Set-EXLAdServerSettings -ViewEntireForest $True
 
 
 ###   Exchange Online
@@ -100,7 +100,7 @@ Import-PSSession $ccSession –AllowClobber -Prefix CC
 ### Azure Active Directory Rights Management
 Import-Module AADRM
 Connect-AadrmService -Credential $CloudCred
-    
+
 
 ### Azure Resource Manager
 Login-AzureRmAccount -Credential $CloudCred
@@ -118,12 +118,12 @@ Connect-SPOService -Url "https://$($Tenant)-admin.sharepoint.com" -Credential $C
 
 ### Skype Online
 Import-Module SkypeOnlineConnector
-#$SkypeSession = New-CsOnlineSession -Credential $CloudCred –OverrideAdminDomain "iff.onmicrosoft.com" 
-$SkypeSession = New-CsOnlineSession -UserName "rob.wolsky@iff.com" 
+#$SkypeSession = New-CsOnlineSession -Credential $CloudCred –OverrideAdminDomain "iff.onmicrosoft.com"
+$SkypeSession = New-CsOnlineSession -UserName "rob.wolsky@iff.com"
 Import-PSSession $SkypeSession –AllowClobber
 
 ### Skype/Lync Local
-#$LocalCredential = Get-Credential 
+#$LocalCredential = Get-Credential
 $LyncSession = New-PSSession -ConnectionUri "https://iffandfe04.mail.global.iff.com/PowerShell" -Credential $LocalCredential
 Import-PSSession $LyncSession –AllowClobber
 
@@ -132,7 +132,8 @@ Invoke-Command -Session $Lync {Import-Module Lync}
 Import-PSSession -Session $Lync -Module Lync
 
 ### Azure AD v2.0
-Connect-AzureAD -Credential $CloudCred
+#Connect-AzureAD -Credential $CloudCred
+Connect-AzureAD -TenantId $Tenant -Confirm
 
 
 ### Azure AD Connect (DirSync)

@@ -47,7 +47,7 @@
 
 $Tenant = "iff"
 
-$LocalExchServer = "iffandhyb01.mail.global.iff.com"
+$LocalExchServer = "naazeexhybpv1.mail.global.iff.com"
 $Local2010Server = "iffandmbx01.mail.global.iff.com"
 
 $LocalCredential = Get-Credential "global\rxw1401_e"

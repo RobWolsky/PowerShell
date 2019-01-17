@@ -7,7 +7,7 @@ $Users = @()
 #check that the user is licensed, then swap E3 for E1
 ForEach ($User in $Users)
 {
-    if (Get-MsolUser -UserPrincipalName $User | ? {(($_.Licenses | Out-String) -notlike "*PACK*") -and (($_.BlockCredential -ne $true))})
+    if (Get-MsolUser -UserPrincipalName $User | ? {(($_.Licenses | Out-String) -notlike "*PACK*")}
     {
 
     Write-Host ("User "+$User+" is not currently licensed"); continue

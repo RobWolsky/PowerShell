@@ -254,3 +254,10 @@ Get-EXOMailbox -SoftDeletedMailbox | Select-Object DisplayName, Name,ExchangeGui
 #Check Federation Settings - should be set for Okta
 Get-MsolDomainFederationSettings -DomainName iff.com
 Set-MsolDomainAuthentication -DomainName iff.com
+
+#Conference Room Delegates for Office 365
+get-exomailbox RDNJDelegateTest | Set-EXOCalendarProcessing -AllBookInPolicy:$false -AllRequestInPolicy:$false -BookInPolicy "ITGlobal@iff.com", "Rob.Wolsky@iff.com"
+get-exomailbox RDNJ_ConfRmC | Set-EXOCalendarProcessing -AllBookInPolicy:$false -AllRequestInPolicy:$false -BookInPolicy "ITGlobal@iff.com", "maryanne.elfstrom@iff.com", "danielle.cocuzza@iff.com", "fran.parkinson@iff.com", "veronica.cocuzza@iff.com", "maria.molloy@iff.com", "fara.alvarez@iff.com"
+
+### Exlude Contact from Email Policy
+Set-EXLMailContact -Identity "Anna Corless" -EmailAddressPolicyEnabled:$False

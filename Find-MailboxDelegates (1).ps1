@@ -73,7 +73,7 @@ This will enumerate groups that have permissions to mailboxes and include in the
 Use this to exclude groups that you don't want to enumerate. Provide the path to a csv file (no header needed) with each group name on its own line. 
 
 .PARAMETER ExchServerFQDN
-Connect to a specific Exchange Server iffandhyb01.mail.global.iff.com
+Connect to a specific Exchange Server
 
 .PARAMETER Resume
 Use this to resume the script in case of a failure while running the script on a large number of users. This way you don't have to start all over.
@@ -112,7 +112,7 @@ Switch to run the script taking into account an Account/Resource environment
 
 .EXAMPLE
 #Export all permissions and exclude service accounts for all mailboxes
-.\Find-MailboxDelegates.ps1 -InputMailboxesCSV "C:\Users\administrator\Desktop\userlist.csv" -FullAccess -SendOnBehalfTo -SendAs -Calendar -ExcludeServiceAcctsCSV "c:\serviceaccts.csv" 
+.\Find-MailboxDelegates.ps1 -FullAccess -SendOnBehalfTo -SendAs -Calendar -ExcludeServiceAcctsCSV "c:\serviceaccts.csv" 
 
 .EXAMPLE
 #Export all permissions and exclude service accounts for all mailboxes
@@ -122,9 +122,6 @@ Switch to run the script taking into account an Account/Resource environment
 #Skip collect permissions (assumes you already have a permissions output file) and only run Step 2 and 3 to batch users
 .\Find-MailboxDelegates.ps1 -BatchUsers
 
-.EXAMPLE
-#IFF export all settings and enumerate groups, exclude service accounts and service groups
-C:\Users\rxw1401\OneDrive - International Flavors & Fragrances Inc\Documents\PowerShell\Find-MailboxDelegates-master\Find-MailboxDelegates.ps1 -ExchServerFQDN 'iffandhyb01.mail.global.iff.com' -FullAccess -SendOnBehalfTo -SendAs -Calendar -EnumerateGroups -ExcludeServiceAcctsCSV "c:\temp\svcaccts.csv" -ExcludeGroupsCSV "c:\temp\svcgroups.csv"
 
 #>
 
@@ -155,7 +152,7 @@ Begin{
                )
                if ($LogName -NotLike $Null) {
                   # log the date and time in the text file along with the data passed
-                  "$([DateTime]::Now.ToShortDateString()) $([DateTime]::Now.ToShortTimeString()) : $LogEntryText" | Start-Sleep -m 500 | Out-File -FilePath $LogName -append;
+                  "$([DateTime]::Now.ToShortDateString()) $([DateTime]::Now.ToShortTimeString()) : $LogEntryText" | Out-File -FilePath $LogName -append;
                   if ($ForeGroundColor -NotLike $null) {
                      # for testing i pass the ForegroundColor parameter to act as a switch to also write to the shell console
                      write-host $LogEntryText -ForegroundColor $ForeGroundColor

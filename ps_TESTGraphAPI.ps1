@@ -41,9 +41,6 @@ $GraphAccessToken | Export-GraphOAuthAccessToken -Path 'c:\Temp\AccessToken.XML'
 $GraphAccessToken =  Import-GraphOAuthAccessToken -Path 'c:\Temp\AccessToken.XML'
 $GraphAccessToken | Update-GraphOAuthAccessToken -Force
 
-#Initialize array variable used to store records for output
-$arrResults = @()
-
 #Initialize array variable used to store Plan records
 $plans = @()
 $buckets = @()
@@ -70,116 +67,63 @@ ForEach ($plan in [Array] $plans)
         $uri = "https://graph.microsoft.com/v1.0/planner/buckets/" + $bucket.id + "/tasks"
         $t = Invoke-GraphRequest -Uri $uri -Method GET -AccessToken $GraphAccessToken
         $tasks = $t.result.content | ConvertFrom-Json | select -expand value | select id, title, hasDescription, startDateTime, percentComplete, completeDateTime
-    
-        ForEach ($task in [Array] $tasks)
-        {
-        $users = $t.result.content | ConvertFrom-Json | select -expand value | select -expand assignments | get-member -Type NoteProperty
-                #add a condition, if no user output the task            
-                ForEach ($user in [Array] $users)
-                {
-                $uri = "https://graph.microsoft.com/v1.0/users/" + $user.name
-                $d = Invoke-GraphRequest -Uri $uri -Method GET -AccessToken $GraphAccessToken
-                $display = $d.result.content | ConvertFrom-Json | Select DisplayName
-                #Process for output
+            if(!$tasks){
                 $objEX = [PSCustomObject]@{
 
-                Plan                = $plan.title
-                Bucket              = $bucket.name
-                Task                = $task.id
-                TaskTitle           = $task.title
-                Assigned            = $display.displayName
-                TaskDescription     = $task.hasDescription
-                TaskStart           = $task.startDateTime
-                TaskPercent         = $task.percentComplete
-                TaskComplete        = $task.completeDateTime
-                }
-                $arrResults += $objEX
-                }
-            }
+                    Plan                = $plan.title
+                    Bucket              = $bucket.name
+                    Task                = $null
+                    TaskTitle           = $null
+                    Assigned            = $null
+                    TaskDescription     = $null
+                    TaskStart           = $null
+                    TaskPercent         = $null
+                    TaskComplete        = $null
+                    }
+                    $arrResults += $objEX; continue}
+                ForEach ($task in [Array] $tasks)
+                {
+                $users = $t.result.content | ConvertFrom-Json | select -expand value | select -expand assignments | get-member -Type NoteProperty
+                        #add a condition, if no user output the task 
+                        if(!$users){
+                            $objEX = [PSCustomObject]@{
+            
+                                Plan                = $plan.title
+                                Bucket              = $bucket.name
+                                Task                = $task.id
+                                TaskTitle           = $task.title
+                                Assigned            = $null
+                                TaskDescription     = $task.hasDescription
+                                TaskStart           = $task.startDateTime
+                                TaskPercent         = $task.percentComplete
+                                TaskComplete        = $task.completeDateTime
+                                        }
+                                $arrResults += $objEX; continue}
+                        
+                        ForEach ($user in [Array] $users)
+                        {
+                        $uri = "https://graph.microsoft.com/v1.0/users/" + $user.name
+                        $d = Invoke-GraphRequest -Uri $uri -Method GET -AccessToken $GraphAccessToken
+                        $display = $d.result.content | ConvertFrom-Json | Select DisplayName
+                        #Process for output
+                        $objEX = [PSCustomObject]@{
+
+                        Plan                = $plan.title
+                        Bucket              = $bucket.name
+                        Task                = $task.id
+                        TaskTitle           = $task.title
+                        Assigned            = $display.displayName
+                        TaskDescription     = $task.hasDescription
+                        TaskStart           = $task.startDateTime
+                        TaskPercent         = $task.percentComplete
+                        TaskComplete        = $task.completeDateTime
+                        }
+                        $arrResults += $objEX
+                        }
+                    }
 
     }
 }
-$arrResults | Out-GridView
-
-<#
-$b = Invoke-GraphRequest -Uri https://graph.microsoft.com/v1.0/planner/plans/UFAEkZ4YJkGi3WA97tUoI2QAEEL9/buckets -Method GET -AccessToken $GraphAccessToken
-$t = Invoke-GraphRequest -Uri https://graph.microsoft.com/v1.0/planner/tasks/ICgDFyNHl0KgJ3NLvBNeImQALHld -Method GET -AccessToken $GraphAccessToken
-$d = Invoke-GraphRequest -Uri https://graph.microsoft.com/v1.0/planner/tasks/ICgDFyNHl0KgJ3NLvBNeImQALHld/details -Method GET -AccessToken $GraphAccessToken
-#>
-#$b.result.content | ConvertFrom-Json | select -expand value | select id, name
-#$d.result.content | ConvertFrom-Json | select description
-
-
-#Initialize array variable used to store records for output
-<#
-Write-Host -ForegroundColor Green "Processing user objects."
-Write-Host -ForegroundColor Green "$($identities.Count) objects in scope."
-	
-$arrResults = @()
-
-    #Process for output
-
-    $objEX = New-Object -TypeName PSObject
-        
-    $objEX | Add-Member -MemberType NoteProperty -Name User -Value $User.DisplayName
-
-    $objEX | Add-Member -MemberType NoteProperty -Name ID -Value $User.Name
-
-    $objEX | Add-Member -MemberType NoteProperty -Name UPN -Value $User.UserPrincipalName
-
-    $objEX | Add-Member -MemberType NoteProperty -Name DN -Value $User.DistinguishedName
-
-    $objEX | Add-Member -MemberType NoteProperty -Name License -Value "NOT SYNCHED TO MSOL"
-
-    
-    $arrResults += $objEX 
-    ; continue}
-    if ($verify.isLicensed -eq $false) {
-    #Write-Host -BackgroundColor Red "User $($User.UserPrincipalName) not licensed"
-    #Process for output
-
-    $objEX = New-Object -TypeName PSObject
-        
-    $objEX | Add-Member -MemberType NoteProperty -Name User -Value $User.DisplayName
-
-    $objEX | Add-Member -MemberType NoteProperty -Name ID -Value $User.Name
-
-    $objEX | Add-Member -MemberType NoteProperty -Name UPN -Value $User.UserPrincipalName
-
-    $objEX | Add-Member -MemberType NoteProperty -Name DN -Value $User.DistinguishedName
-
-    $objEX | Add-Member -MemberType NoteProperty -Name License -Value "UNLICENSED"
-
-    
-    $arrResults += $objEX 
-    ; continue}
-    
-    $Got = $verify | Select-Object -ExpandProperty Licenses
-        ForEach ($License in [Array] $Got)
-{       $OutSKU = $License.AccountSKUID
-        
-
-	
- #Process for output
-
-    $objEX = New-Object -TypeName PSObject
-        
-    $objEX | Add-Member -MemberType NoteProperty -Name User -Value $User.DisplayName
-
-    $objEX | Add-Member -MemberType NoteProperty -Name ID -Value $User.Name
-
-    $objEX | Add-Member -MemberType NoteProperty -Name UPN -Value $User.UserPrincipalName
-    
-    $objEX | Add-Member -MemberType NoteProperty -Name DN -Value $User.DistinguishedName
-
-    $objEX | Add-Member -MemberType NoteProperty -Name License -Value $OutSku
-
-    
-    $arrResults += $objEX 
-
-}
-}
-
 $arrResults | Out-GridView
 
 

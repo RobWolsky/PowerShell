@@ -285,3 +285,7 @@ Get-Mailbox -Resultsize Unlimited | Set-Mailbox -MaxReceiveSize 150MB -MaxSendSi
 
 #Autodiscover Internal URI
 Get-EXLClientAccessServer | Select Identity, AutoDiscoverServiceInternalUri, AutoDiscoverSiteScope
+
+#Search Audit Log for Teams External MemberAdded
+$a = Search-EXOUnifiedAuditLog -ResultSize 5000 -StartDate 4/1/2019 -EndDate 4/8/2019 -RecordType MicrosoftTeams -Operations MemberAdded -Formatted
+$a.AuditData | Where {($_ | OUt-String) -like "*EXT*"} | ConvertFrom-Json | Select -Property UserId -ExpandProperty Members | FT UserId, DisplayName, Role, UPN

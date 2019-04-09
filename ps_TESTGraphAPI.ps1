@@ -61,16 +61,21 @@ ForEach ($plan in [Array] $plans)
     $uri = "https://graph.microsoft.com/v1.0/planner/plans/" + $plan.id + "/buckets"
     $b = Invoke-GraphRequest -Uri $uri -Method GET -AccessToken $GraphAccessToken
     $buckets = $b.result.content | ConvertFrom-Json | select -expand value | select id, name
+
+    $uri = "https://graph.microsoft.com/v1.0/planner/plans/" + $plan.id + "/details"
+    $dt = Invoke-GraphRequest -Uri $uri -Method GET -AccessToken $GraphAccessToken
+    $details = $dt.result.content | ConvertFrom-Json | select -ExpandProperty categoryDescriptions | get-member -Type NoteProperty
     
     ForEach ($bucket in [Array] $buckets)
     {
         $uri = "https://graph.microsoft.com/v1.0/planner/buckets/" + $bucket.id + "/tasks"
         $t = Invoke-GraphRequest -Uri $uri -Method GET -AccessToken $GraphAccessToken
         $tasks = $t.result.content | ConvertFrom-Json | select -expand value | select id, title, hasDescription, startDateTime, percentComplete, completeDateTime
-            if(!$tasks){
+        if(!$tasks){
                 $objEX = [PSCustomObject]@{
 
                     Plan                = $plan.title
+                    PlanID              = $plan.id
                     Bucket              = $bucket.name
                     Task                = $null
                     TaskTitle           = $null
@@ -79,16 +84,27 @@ ForEach ($plan in [Array] $plans)
                     TaskStart           = $null
                     TaskPercent         = $null
                     TaskComplete        = $null
+                    Category            = $null
+                    Priority            = $null
                     }
                     $arrResults += $objEX; continue}
                 ForEach ($task in [Array] $tasks)
                 {
                 $users = $t.result.content | ConvertFrom-Json | select -expand value | select -expand assignments | get-member -Type NoteProperty
-                        #add a condition, if no user output the task 
+                $priority = $t.result.content | ConvertFrom-Json | select -expand value | select -ExpandProperty appliedCategories | get-member -Type NoteProperty
+                if($priority){
+                    $category = $details | Where-Object Name -EQ $priority.Name
+                    $index = $category.Name.Substring(8,1)-1
+                       
+                } else {
+                    $index = 0
+                }
+               #add a condition, if no user output the task 
                         if(!$users){
                             $objEX = [PSCustomObject]@{
             
                                 Plan                = $plan.title
+                                PlanID              = $plan.id
                                 Bucket              = $bucket.name
                                 Task                = $task.id
                                 TaskTitle           = $task.title
@@ -97,6 +113,9 @@ ForEach ($plan in [Array] $plans)
                                 TaskStart           = $task.startDateTime
                                 TaskPercent         = $task.percentComplete
                                 TaskComplete        = $task.completeDateTime
+                                Category            = $details.Definition[$index].Substring($details.Definition[$index].IndexOf('=')+1)
+                                #Category            = $details | Where-Object Name -EQ $priority.Name
+                                Priority            = $priority.Name
                                         }
                                 $arrResults += $objEX; continue}
                         
@@ -109,6 +128,7 @@ ForEach ($plan in [Array] $plans)
                         $objEX = [PSCustomObject]@{
 
                         Plan                = $plan.title
+                        PlanID              = $plan.id
                         Bucket              = $bucket.name
                         Task                = $task.id
                         TaskTitle           = $task.title
@@ -117,6 +137,9 @@ ForEach ($plan in [Array] $plans)
                         TaskStart           = $task.startDateTime
                         TaskPercent         = $task.percentComplete
                         TaskComplete        = $task.completeDateTime
+                        Category            = $details.Definition[$index].Substring($details.Definition[$index].IndexOf('=')+1)
+                        #Category            = $details | Where-Object Name -EQ $priority.Name
+                        Priority            = $priority.Name
                         }
                         $arrResults += $objEX
                         }

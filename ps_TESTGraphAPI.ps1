@@ -52,7 +52,6 @@ $arrResults = @()
 
 #Populate Arrays with Plans, Buckets, Tasks, and Task Details
 #Requirement is Office 365 Group ID
-
 $p = Invoke-GraphRequest -Uri https://graph.microsoft.com/v1.0/groups/32fe1fd8-02df-4721-a005-876054cdf0a9/planner/plans -Method GET -AccessToken $GraphAccessToken
 $plans = $p.result.content | ConvertFrom-Json | select -expand value | select id, title
 

@@ -289,3 +289,8 @@ Get-EXLClientAccessServer | Select Identity, AutoDiscoverServiceInternalUri, Aut
 #Search Audit Log for Teams External MemberAdded
 $a = Search-EXOUnifiedAuditLog -ResultSize 5000 -StartDate 4/1/2019 -EndDate 4/8/2019 -RecordType MicrosoftTeams -Operations MemberAdded -Formatted
 $a.AuditData | Where {($_ | OUt-String) -like "*EXT*"} | ConvertFrom-Json | Select -Property UserId -ExpandProperty Members | FT UserId, DisplayName, Role, UPN
+
+#Search Audit Log for Last Mailbox Access
+$a = Search-EXOUnifiedAuditLog -ResultSize 100 -StartDate 4/7/2019 -EndDate 4/8/2019 -RecordType ExchangeItem -Operations MailboxLogin -Formatted
+$a.AuditData | ConvertFrom-Json | Select -Property UserId, ResultStatus, CreationTime | FT UserId, ResultStatus, CreationTime
+

@@ -52,8 +52,8 @@ $arrResults = @()
 
 #Populate Arrays with Plans, Buckets, Tasks, and Task Details
 #Requirement is Office 365 Group ID
-#$p = Invoke-GraphRequest -Uri https://graph.microsoft.com/v1.0/groups/32fe1fd8-02df-4721-a005-876054cdf0a9/planner/plans -Method GET -AccessToken $GraphAccessToken
-$p = Invoke-GraphRequest -Uri https://graph.microsoft.com/v1.0/groups/aa96c91d-2c53-40df-806e-faa72bc962c9/planner/plans -Method GET -AccessToken $GraphAccessToken
+$p = Invoke-GraphRequest -Uri https://graph.microsoft.com/v1.0/groups/32fe1fd8-02df-4721-a005-876054cdf0a9/planner/plans -Method GET -AccessToken $GraphAccessToken
+#$p = Invoke-GraphRequest -Uri https://graph.microsoft.com/v1.0/groups/aa96c91d-2c53-40df-806e-faa72bc962c9/planner/plans -Method GET -AccessToken $GraphAccessToken
 $plans = $p.result.content | ConvertFrom-Json | select -expand value | select id, title
 
 ForEach ($plan in [Array] $plans)
@@ -77,6 +77,7 @@ ForEach ($plan in [Array] $plans)
                     Plan                = $plan.title
                     PlanID              = $plan.id
                     Bucket              = $bucket.name
+                    BucketID            = $bucket.id
                     Task                = $null
                     TaskTitle           = $null
                     Assigned            = $null
@@ -106,6 +107,7 @@ ForEach ($plan in [Array] $plans)
                                 Plan                = $plan.title
                                 PlanID              = $plan.id
                                 Bucket              = $bucket.name
+                                BucketID            = $bucket.id
                                 Task                = $task.id
                                 TaskTitle           = $task.title
                                 Assigned            = $null
@@ -130,6 +132,7 @@ ForEach ($plan in [Array] $plans)
                         Plan                = $plan.title
                         PlanID              = $plan.id
                         Bucket              = $bucket.name
+                        BucketID            = $bucket.id
                         Task                = $task.id
                         TaskTitle           = $task.title
                         Assigned            = $display.displayName

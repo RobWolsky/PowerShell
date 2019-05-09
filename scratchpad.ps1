@@ -294,3 +294,14 @@ $a.AuditData | Where {($_ | OUt-String) -like "*EXT*"} | ConvertFrom-Json | Sele
 $a = Search-EXOUnifiedAuditLog -ResultSize 100 -StartDate 4/7/2019 -EndDate 4/8/2019 -RecordType ExchangeItem -Operations MailboxLogin -Formatted
 $a.AuditData | ConvertFrom-Json | Select -Property UserId, ResultStatus, CreationTime | FT UserId, ResultStatus, CreationTime
 
+#Conference Room Delegates for Office 365
+get-exomailbox RDNJDelegateTest | Set-EXOCalendarProcessing -AllBookInPolicy:$false -AllRequestInPolicy:$false -BookInPolicy "ITGlobal@iff.com", "Rob.Wolsky@iff.com"
+get-exomailbox RDNJ_ConfRmC | Set-EXOCalendarProcessing -AllBookInPolicy:$false -AllRequestInPolicy:$false -BookInPolicy "ITGlobal@iff.com", "maryanne.elfstrom@iff.com", "danielle.cocuzza@iff.com", "fran.parkinson@iff.com", "veronica.cocuzza@iff.com", "maria.molloy@iff.com", "fara.alvarez@iff.com", "Deb.Kieselowsky@IFF.com", "Soumya.Thankam@IFF.com"
+
+### Exlude Contact from Email Policy
+Set-EXLMailContact -Identity "Anna Corless" -EmailAddressPolicyEnabled:$False
+
+### Set Mailbox Quotas - Office 365
+Set-EXOMailbox gregory.yep@iff.com -ProhibitSendQuota 45GB  -ProhibitSendReceiveQuota 50GB  -IssueWarningQuota 40GB
+Get-EXOMailbox gregory.yep@iff.com | Select *quota
+

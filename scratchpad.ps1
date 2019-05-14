@@ -303,5 +303,5 @@ Set-EXLMailContact -Identity "Anna Corless" -EmailAddressPolicyEnabled:$False
 
 ### Set Mailbox Quotas - Office 365
 Set-EXOMailbox gregory.yep@iff.com -ProhibitSendQuota 45GB  -ProhibitSendReceiveQuota 50GB  -IssueWarningQuota 40GB
-Get-EXOMailbox gregory.yep@iff.com | Select *quota
+Get-EXOMailbox rob.wolsky@iff.com | Select *quota
 

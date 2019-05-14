@@ -52,8 +52,8 @@ $arrResults = @()
 
 #Populate Arrays with Plans, Buckets, Tasks, and Task Details
 #Requirement is Office 365 Group ID
-$p = Invoke-GraphRequest -Uri https://graph.microsoft.com/v1.0/groups/32fe1fd8-02df-4721-a005-876054cdf0a9/planner/plans -Method GET -AccessToken $GraphAccessToken
-#$p = Invoke-GraphRequest -Uri https://graph.microsoft.com/v1.0/groups/aa96c91d-2c53-40df-806e-faa72bc962c9/planner/plans -Method GET -AccessToken $GraphAccessToken
+#$p = Invoke-GraphRequest -Uri https://graph.microsoft.com/v1.0/groups/32fe1fd8-02df-4721-a005-876054cdf0a9/planner/plans -Method GET -AccessToken $GraphAccessToken
+$p = Invoke-GraphRequest -Uri https://graph.microsoft.com/v1.0/groups/aa96c91d-2c53-40df-806e-faa72bc962c9/planner/plans -Method GET -AccessToken $GraphAccessToken
 $plans = $p.result.content | ConvertFrom-Json | select -expand value | select id, title
 
 ForEach ($plan in [Array] $plans)
@@ -70,7 +70,7 @@ ForEach ($plan in [Array] $plans)
     {
         $uri = "https://graph.microsoft.com/v1.0/planner/buckets/" + $bucket.id + "/tasks"
         $t = Invoke-GraphRequest -Uri $uri -Method GET -AccessToken $GraphAccessToken
-        $tasks = $t.result.content | ConvertFrom-Json | select -expand value | select id, title, hasDescription, startDateTime, percentComplete, completeDateTime
+        $tasks = $t.result.content | ConvertFrom-Json | select -expand value | select id, title, hasDescription, createdDateTime, startDateTime, percentComplete, dueDateTime, completeDateTime
         if(!$tasks){
                 $objEX = [PSCustomObject]@{
 
@@ -82,9 +82,11 @@ ForEach ($plan in [Array] $plans)
                     TaskTitle           = $null
                     Assigned            = $null
                     TaskDescription     = $null
+                    TaskCreate          = $null
                     TaskStart           = $null
                     TaskPercent         = $null
                     TaskComplete        = $null
+                    TaskClosed          = $null
                     Category            = $null
                     Priority            = $null
                     }
@@ -112,9 +114,11 @@ ForEach ($plan in [Array] $plans)
                                 TaskTitle           = $task.title
                                 Assigned            = $null
                                 TaskDescription     = $task.hasDescription
+                                TaskCreate          = $task.createdDateTime
                                 TaskStart           = $task.startDateTime
                                 TaskPercent         = $task.percentComplete
-                                TaskComplete        = $task.completeDateTime
+                                TaskComplete        = $task.dueDateTime
+                                TaskClosed          = $task.completeDateTime
                                 Category            = $details.Definition[$index].Substring($details.Definition[$index].IndexOf('=')+1)
                                 #Category            = $details | Where-Object Name -EQ $priority.Name
                                 Priority            = $priority.Name
@@ -137,9 +141,11 @@ ForEach ($plan in [Array] $plans)
                         TaskTitle           = $task.title
                         Assigned            = $display.displayName
                         TaskDescription     = $task.hasDescription
+                        TaskCreate          = $task.createdDateTime
                         TaskStart           = $task.startDateTime
                         TaskPercent         = $task.percentComplete
-                        TaskComplete        = $task.completeDateTime
+                        TaskComplete        = $task.dueDateTime
+                        TaskClosed          = $task.completeDateTime
                         Category            = $details.Definition[$index].Substring($details.Definition[$index].IndexOf('=')+1)
                         #Category            = $details | Where-Object Name -EQ $priority.Name
                         Priority            = $priority.Name

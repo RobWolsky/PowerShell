@@ -76,7 +76,7 @@ Get-EXLMailbox -ResultSize Unlimited -RecipientType UserMailbox | Select Name, P
 #Get-MailboxFolder
 
 Get-EXLDistributionGroup | ? {($_.DisplayName | Out-String).Contains("Employee")} | Select Alias, OrganizationalUnit
-Get-EXLOrganizationalUnit -SearchText "EMPLOYEE" | Select CanonicalName | Sort-Object CanonicalName | Out-GridView
+Get-EXLOrganizationalUnit -SearchText "EMPLOYEE" | ? {($_.CanonicalName | Out-String) -notlike "*NO**"} | Select CanonicalName | Sort-Object CanonicalName | Out-GridView
 Get-EXLOrganizationalUnit -SearchText "EMPLOYEE" | Select DistinguishedName| Sort-Object DistinguishedName | Out-GridView
 Get-ADuser -Filter * -SearchBase $_objectItem.DistinguishedName -SearchScope OneLevel  | measure | select Count  
 New-DistributionGroup -Name "exPS" -DisplayName "exPS" -Alias "exPS" -OrganizationalUnit "global.iff.com/IFF/NA/US/PH/Exchange/ExGroups" -ManagedBy "llm7786" -Notes "Group created to replace dynamic distribution lists. See Louis Muniz" -Type "Distribution" -Confirm:$False

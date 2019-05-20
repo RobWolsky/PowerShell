@@ -93,15 +93,16 @@ ForEach ($plan in [Array] $plans)
                     $arrResults += $objEX; continue}
                 ForEach ($task in [Array] $tasks)
                 {
+                $display = @()
                 $users = $t.result.content | ConvertFrom-Json | select -expand value | select -expand assignments | get-member -Type NoteProperty
                 $priority = $t.result.content | ConvertFrom-Json | select -expand value | select -ExpandProperty appliedCategories | get-member -Type NoteProperty
                 if($priority){
                     $category = $details | Where-Object Name -EQ $priority.Name
                     $index = $category.Name.Substring(8,1)-1
                        
-                } else {
-                    $index = 0
-                }
+                            } else {
+                                    $index = 0
+                                    }
                #add a condition, if no user output the task 
                         if(!$users){
                             $objEX = [PSCustomObject]@{
@@ -125,11 +126,13 @@ ForEach ($plan in [Array] $plans)
                                         }
                                 $arrResults += $objEX; continue}
                         
+                        #Write-Host $users
                         ForEach ($user in [Array] $users)
                         {
                         $uri = "https://graph.microsoft.com/v1.0/users/" + $user.name
                         $d = Invoke-GraphRequest -Uri $uri -Method GET -AccessToken $GraphAccessToken
                         $display = $d.result.content | ConvertFrom-Json | Select DisplayName
+                        #Write-Host $display
                         #Process for output
                         $objEX = [PSCustomObject]@{
 
@@ -149,8 +152,8 @@ ForEach ($plan in [Array] $plans)
                         Category            = $details.Definition[$index].Substring($details.Definition[$index].IndexOf('=')+1)
                         #Category            = $details | Where-Object Name -EQ $priority.Name
                         Priority            = $priority.Name
-                        }
-                        $arrResults += $objEX
+                                                    }
+                        $arrResults += $objEX; continue
                         }
                     }
 

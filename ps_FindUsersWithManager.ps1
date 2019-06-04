@@ -25,15 +25,21 @@
 
 
 #Populate Identity Array
-[Array] $identities = get-aduser -Filter "*" -Properties DisplayName, Manager, Enabled, LastLogonDate, Mail, physicalDeliveryOfficeName, iffRegionName, iffRegionCode, iffCountryCode, iffCityCode, msExchRecipientTypeDetails, msRTCSIP-DeploymentLocator, msRTCSIP-PrimaryUserAddress | Select DisplayName, Name, UserPrincipalName, Mail, LastLogonDate, Enabled, physicalDeliveryOfficeName, iffRegionName, iffRegionCode, iffCountryCode, iffCityCode, msExchRecipientTypeDetails, msRTCSIP-DeploymentLocator, msRTCSIP-PrimaryUserAddress, Manager #| ? {$_.msExchRecipientTypeDetails -ne 2147483648}
+[Array] $identities = get-aduser -Filter "*" -Properties Name,DisplayName, Manager, Enabled, LastLogonDate, Mail, physicalDeliveryOfficeName, iffRegionName, iffRegionCode, iffCountryCode, iffCityCode, msExchRecipientTypeDetails, msRTCSIP-DeploymentLocator, msRTCSIP-PrimaryUserAddress | Select DisplayName, Name, UserPrincipalName, Mail, LastLogonDate, Enabled, physicalDeliveryOfficeName, iffRegionName, iffRegionCode, iffCountryCode, iffCityCode, msExchRecipientTypeDetails, msRTCSIP-DeploymentLocator, msRTCSIP-PrimaryUserAddress, Manager #| ? {$_.msExchRecipientTypeDetails -ne 2147483648}
 
 #Initialize array variable used to store records for output
 
 $arrResults = @()
-
+$ismanager = ""
 ForEach ($aduser in [Array] $identities)
 {
-$manager = ""
+        if ($identities.manager -like "*"+$aduser.Name+"*") {
+            $ismanager = "YES"
+        } else {
+            $ismanager = "NO"; continue
+        }
+
+    $manager = ""
 #Process mailbox for FullAccess Permissions
 trap { 'User: '+$aduser.DisplayName+' has no AD Manager'; continue }
 $manager = Get-ADUser -Identity $aduser.Manager -Properties DisplayName
@@ -72,7 +78,9 @@ $manager = Get-ADUser -Identity $aduser.Manager -Properties DisplayName
 
     $objEX | Add-Member -MemberType NoteProperty -Name ManagerAlias -Value $manager.Name
 
-    $arrResults += $objEX 
+    $objEX | Add-Member -MemberType NoteProperty -Name IsManager -Value $ismanager
+
+    $arrResults += $objEX
     
 }
 

@@ -120,7 +120,7 @@ Connect-MsolService #-Credential rob.wolsky@iff.com
 
 ###  SharePoint Online
 Import-Module Microsoft.Online.SharePoint.PowerShell
-Connect-SPOService -Url "https://$($Tenant)-admin.sharepoint.com" 
+Connect-SPOService -Url "https://iff-admin.sharepoint.com" 
 
 
 ### Skype Online

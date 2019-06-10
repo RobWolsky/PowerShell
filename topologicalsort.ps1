@@ -62,7 +62,7 @@ function get-directreports
                 #the processing user object
 
                 #Store the employee level and name to the file
-                "$Script:Count.  " + ("`t" * $level) + (Get-ADUser $directreport).name + "," + (Get-ADUser -Properties DisplayName $directreport).DisplayName | Out-File -FilePath .\OrgUsers.txt -Append
+                "$Script:Count.  " + ("`t" * $level) + (Get-ADUser $directreport).name + "," + (Get-ADUser -Properties DisplayName $directreport).DisplayName | Out-File -FilePath c:\Temp\OrgUsers.txt -Append
 
                 #Display the employee organization level and name to the screen
                 #("¦¦¦¦" * $level) + (Get-ADUser $directreport).name
@@ -91,7 +91,7 @@ function get-directreports
     }
 
     #Decrease the level of organization structure by one
-    #Every time this function quits, we are going to up in the organization structure
+    #Every time this function quits, we are going up in the organization structure
     $level--
 }
 
@@ -100,12 +100,14 @@ function get-directreports
 
 
 #------------------------------------------------------------------------------------------
-# Name: CrawlAD.ps1
+# Name: topologicalsort.ps1
 # Purpose: Get all employees working under a speific VP
 # Parameters: Distinguished Name of the employee (VP or Director or Manager)
 # 
-# Written by: Anand Venkatachalapathy
-# Written Date: May 16th 2012
+# Written by: Robert Wolsky
+# AD Crawl code borrowed from: Anand Venkatachalapathy
+# Written Date: June 3, 2019
+# Example: .\topologicalsort.ps1 "CN=vxv7417,OU=EMPLOYEE,OU=UB,OU=US,OU=NA,OU=IFF,DC=global,DC=iff,DC=com"
 #------------------------------------------------------------------------------------------
 
 #Turning off the errors and warnings.
@@ -125,7 +127,7 @@ $DNofVP = $args[0]
 $Script:Count=1
 
 #write to file and Display the employee number 1 of this organization
-"$Script:Count.  " + (Get-ADUser $DNofVP).name | Out-File -FilePath .\OrgUsers.txt
+"$Script:Count.  " + (Get-ADUser $DNofVP).name | Out-File -FilePath c:\Temp\OrgUsers.txt
 (Get-ADUser $DNofVP).name
 
 #Increase the employee count by 1 of this organization (before calling get-directreports

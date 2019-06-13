@@ -52,9 +52,9 @@ function get-directreports
         {
             #Check the currenly processing object is Contact or not
 			$adobject = get-AdObject $directreport
-            If ($adobject.ObjectClass -eq "contact")
+            If (($adobject.ObjectClass -eq "contact") -OR (IsAccountDisabled(Get-ADUser $directreport -Properties distinguishedName)))
             {
-                #this current object is a contact..do nothing.
+                #this current object is a contact or disabled user..do nothing.
             }
             else 
             {

@@ -108,6 +108,7 @@ function get-directreports
 # AD Crawl code borrowed from: Anand Venkatachalapathy
 # Written Date: June 3, 2019
 # Example: .\topologicalsort.ps1 "CN=vxv7417,OU=EMPLOYEE,OU=UB,OU=US,OU=NA,OU=IFF,DC=global,DC=iff,DC=com"
+# Example: .\topologicalsort.ps1 "CN=gxy9945,OU=EMPLOYEE,OU=UB,OU=US,OU=NA,OU=IFF,DC=global,DC=iff,DC=com"
 #------------------------------------------------------------------------------------------
 
 #Turning off the errors and warnings.
@@ -127,7 +128,7 @@ $DNofVP = $args[0]
 $Script:Count=1
 
 #write to file and Display the employee number 1 of this organization
-"$Script:Count.  " + (Get-ADUser $DNofVP).name | Out-File -FilePath c:\Temp\OrgUsers.txt
+"$Script:Count.  " + (Get-ADUser $DNofVP).name + "," + (Get-ADUser -Properties DisplayName $DNofVP).DisplayName | Out-File -FilePath c:\Temp\OrgUsers.txt
 (Get-ADUser $DNofVP).name
 
 #Increase the employee count by 1 of this organization (before calling get-directreports

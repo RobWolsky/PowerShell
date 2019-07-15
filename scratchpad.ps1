@@ -281,7 +281,7 @@ Get-EXLReceiveConnector -Identity "IFFANDFE01\SharePoint 2010 Outgoing Email" | 
 #Check Max Send and Receive Sizes
 Get-EXOTransportConfig | fl maxreceivesize,maxsendsize
 Get-EXOMailboxPlan | fl name,maxsendsize,maxreceivesize,isdefault
-Get-Mailbox -Resultsize Unlimited | Set-Mailbox -MaxReceiveSize 150MB -MaxSendSize 150MB
+Get-EXOMailbox -Resultsize Unlimited | Set-Mailbox -MaxReceiveSize 150MB -MaxSendSize 150MB
 
 #Autodiscover Internal URI
 Get-EXLClientAccessServer | Select Identity, AutoDiscoverServiceInternalUri, AutoDiscoverSiteScope
@@ -305,3 +305,9 @@ Set-EXLMailContact -Identity "Anna Corless" -EmailAddressPolicyEnabled:$False
 Set-EXOMailbox gregory.yep@iff.com -ProhibitSendQuota 45GB  -ProhibitSendReceiveQuota 50GB  -IssueWarningQuota 40GB
 Get-EXOMailbox rob.wolsky@iff.com | Select *quota
 
+### Workup DL Creation Script from Topological Sort
+$dl = Import-Csv -Path C:\Temp\RichardOLeary.txt -Header CN, Full, Title
+ForEach ($user in [Array] $dl)
+{
+  Add-EXLDistributionGroupMember -Identity "IFF_FIN_OLeary_All" -Member $user.CN -BypassSecurityGroupManagerCheck
+        }

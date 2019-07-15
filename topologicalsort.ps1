@@ -62,7 +62,8 @@ function get-directreports
                 #the processing user object
 
                 #Store the employee level and name to the file
-                "$Script:Count.  " + ("`t" * $level) + (Get-ADUser $directreport).name + "," + (Get-ADUser -Properties DisplayName $directreport).DisplayName | Out-File -FilePath c:\Temp\OrgUsers.txt -Append
+                #"$Script:Count.  " + ("`t" * $level) + (Get-ADUser $directreport).name + "," + (Get-ADUser -Properties DisplayName $directreport).DisplayName | Out-File -FilePath c:\Temp\OrgUsers.txt -Append
+                (Get-ADUser $directreport).name + "," + (Get-ADUser -Properties DisplayName $directreport).DisplayName + "," + (Get-ADUser -Properties Title $directreport).Title | Out-File -FilePath c:\Temp\OrgUsers.txt -Append
 
                 #Display the employee organization level and name to the screen
                 #("¦¦¦¦" * $level) + (Get-ADUser $directreport).name

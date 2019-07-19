@@ -311,3 +311,21 @@ ForEach ($user in [Array] $dl)
 {
   Add-EXLDistributionGroupMember -Identity "IFF_FIN_OLeary_All" -Member $user.CN -BypassSecurityGroupManagerCheck
         }
+
+### Call Quality Dashboard Exports
+$serverData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name','SecondTenantDataBuilding.Second Network Name','AllStreams.Month Year' -Measures 'Measures.Total Stream Count','Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage','Measures.Video Poor Percentage','Measures.VBSS Poor Percentage','Measures.First Feedback Rating Avg','Measures.Second Feedback Rating Avg'  -OutPutType DataTable -MonthYear '2019-07' -IsServerPair 'Client : Server'        
+$clientData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name','SecondTenantDataBuilding.Second Network Name','AllStreams.Month Year' -Measures 'Measures.Total Stream Count','Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage','Measures.Video Poor Percentage','Measures.VBSS Poor Percentage','Measures.First Feedback Rating Avg','Measures.Second Feedback Rating Avg'  -OutPutType DataTable -MonthYear '2019-07' -IsServerPair 'Client : Client'
+$serverData | Export-Csv c:\temp\cqdserver.csv -NoTypeInformation
+$clientData | Export-Csv c:\temp\cqdclient.csv -NoTypeInformation
+
+### Skype Hybrid Properties
+$user = get-aduser -Filter 'mail -like "CAQC_Mamad*"'
+$credential = Get-Credential
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-DeploymentLocator'="sipfed.online.lync.com"}
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-FederationEnabled'=$TRUE}
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-InternetAccessEnabled'=$TRUE}
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-OptionFlags'=257}
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-PrimaryHomeServer'="CN=Lc Services,CN=Microsoft,CN=2:1,CN=Pools,CN=RTC Service,CN=Services,CN=Configuration,DC=global,DC=iff,DC=com"}
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-PrimaryUserAddress'="sip:" + $user.UserPrincipalName}
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-UserEnabled'=$TRUE}
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-UserPolicies'="{21=1, 1=3, 13=2}"}

@@ -137,6 +137,11 @@ $Lync = New-PSSession -ComputerName "iffandfe04.mail.global.iff.com"
 Invoke-Command -Session $Lync {Import-Module Lync}
 Import-PSSession -Session $Lync -Module Lync
 
+### Skype/Lync BTOCM
+$LocalCredential = Get-Credential 
+$LyncSession = New-PSSession -ConnectionUri "https://lonwebint01.iff.com/Powershell" -Credential $LocalCredential
+Import-PSSession $LyncSession –AllowClobber
+
 ### Azure AD v2.0
 Connect-AzureAD -Credential $CloudCred
 

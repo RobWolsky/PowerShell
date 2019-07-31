@@ -313,12 +313,14 @@ ForEach ($user in [Array] $dl)
         }
 
 ### Call Quality Dashboard Exports
-$serverData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name','SecondTenantDataBuilding.Second Network Name','AllStreams.Month Year' -Measures 'Measures.Total Stream Count','Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage','Measures.Video Poor Percentage','Measures.VBSS Poor Percentage','Measures.First Feedback Rating Avg','Measures.Second Feedback Rating Avg'  -OutPutType DataTable -MonthYear '2019-07' -IsServerPair 'Client : Server'        
-$clientData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name','SecondTenantDataBuilding.Second Network Name','AllStreams.Month Year' -Measures 'Measures.Total Stream Count','Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage','Measures.Video Poor Percentage','Measures.VBSS Poor Percentage','Measures.First Feedback Rating Avg','Measures.Second Feedback Rating Avg'  -OutPutType DataTable -MonthYear '2019-07' -IsServerPair 'Client : Client'
+$serverData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name','SecondTenantDataBuilding.Second Network Name','AllStreams.Month Year' -Measures 'Measures.Total Stream Count','Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage','Measures.Video Poor Percentage','Measures.VBSS Poor Percentage','Measures.First Feedback Rating Poor Percentage','Measures.Second Feedback Rating Poor Percentage'  -OutPutType DataTable -MonthYear '2019-07' -IsServerPair 'Client : Server'        
+$clientData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name','SecondTenantDataBuilding.Second Network Name','AllStreams.Month Year' -Measures 'Measures.Total Stream Count','Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage','Measures.Video Poor Percentage','Measures.VBSS Poor Percentage','Measures.First Feedback Rating Poor Percentage','Measures.Second Feedback Rating Poor Percentage'  -OutPutType DataTable -MonthYear '2019-07' -IsServerPair 'Client : Client'
+$serverData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name','SecondTenantDataBuilding.Second Network Name','AllStreams.Month Year' -Measures 'Measures.Total Stream Count','Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage','Measures.Video Poor Percentage','Measures.VBSS Poor Percentage','Measures.First Feedback Rating Poor Percentage','Measures.Second Feedback Rating Poor Percentage'  -OutPutType DataTable -IsServerPair 'Client : Server'        
+$clientData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name','SecondTenantDataBuilding.Second Network Name','AllStreams.Month Year' -Measures 'Measures.Total Stream Count','Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage','Measures.Video Poor Percentage','Measures.VBSS Poor Percentage','Measures.First Feedback Rating Poor Percentage','Measures.Second Feedback Rating Poor Percentage'  -OutPutType DataTable -IsServerPair 'Client : Client'
 $serverData | Export-Csv c:\temp\cqdserver.csv -NoTypeInformation
 $clientData | Export-Csv c:\temp\cqdclient.csv -NoTypeInformation
 
-### Skype Hybrid Properties
+### Skype Hybrid Properties - for Skype for Business Online
 $user = get-aduser -Filter 'mail -like "CAQC_Mamad*"'
 $credential = Get-Credential
 Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-DeploymentLocator'="sipfed.online.lync.com"}
@@ -329,3 +331,19 @@ Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCS
 Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-PrimaryUserAddress'="sip:" + $user.UserPrincipalName}
 Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-UserEnabled'=$TRUE}
 Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-UserPolicies'="{21=1, 1=3, 13=2}"}
+
+### Skype Hybrid Properties - for Skype for Business Online
+set-aduser abc1234 -Replace @{'msRTCSIP-DeploymentLocator'= "SRV:"} -Server usbodcpv3
+
+### Function to Synch Active Directory
+function Sync-Azure {
+Clear-Host
+write-host "Performing Azure Sync..." -ForegroundColor green
+$s = New-PSSession -ComputerName "USBODIRSAPPV1"
+Invoke-Command -Session $s -ScriptBlock {Import-Module "c:\Program Files\Microsoft Azure AD Sync\Bin\ADSync\ADSync.psd1"}
+Invoke-Command -Session $s -ScriptBlock {Start-ADSyncSyncCycle -PolicyType Delta}
+Remove-PSSession $s
+
+}
+
+

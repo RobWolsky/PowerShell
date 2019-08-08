@@ -134,6 +134,7 @@ Get-MsolUser -MaxResults 100 | ? {($_.Licenses | Out-String) -notlike "*PACK*"} 
 Get-MsolUser -MaxResults 100 | ?{$_.MSExchRecipientTypeDetails -eq $null} | Select DisplayName, MSExchRecipientTypeDetails | Out-GridView
 Get-MsolUser -MaxResults 100 | ? {($_.BlockCredential -eq $true)}
 Get-MsolUser -MaxResults 100 | % {get-aduser -Filter 'UserPrincipalName -eq $_.UserPrincipalName' -Properties iffCountryCode} | Select Name, iffCountryCode | Out-GridView
+Set-MsolUserLicense -UserPrincipalName $user -AddLicenses "IFF:ENTERPRISEPACK" -RemoveLicenses "IFF:STANDARDPACK" 
 
 Get-MsolUser -MaxResults 1000 | ? {(($_.Licenses | Out-String) -notlike "*PACK*") -and (($_.BlockCredential -ne $true) -and ($_.MSExchRecipientTypeDetails -ne $null)) } | Select DisplayName, Licenses, MSExchRecipientTypeDetails, BlockCredential | Out-GridView
 Get-MsolUser -All | ? {(($_.Licenses | Out-String) -notlike "*PACK*") -and (($_.BlockCredential -ne $true) -and ($_.MSExchRecipientTypeDetails -ne $null) -and ($_.MSExchRecipientTypeDetails -eq 1)) } | Select DisplayName, Licenses, MSExchRecipientTypeDetails, BlockCredential | Out-GridView
@@ -306,10 +307,10 @@ Set-EXOMailbox gregory.yep@iff.com -ProhibitSendQuota 45GB  -ProhibitSendReceive
 Get-EXOMailbox rob.wolsky@iff.com | Select *quota
 
 ### Workup DL Creation Script from Topological Sort
-$dl = Import-Csv -Path C:\Temp\RichardOLeary.txt -Header CN, Full, Title
+$dl = Import-Csv -Path C:\Temp\SusanaSuarez.txt -Header CN, Full, Title
 ForEach ($user in [Array] $dl)
 {
-  Add-EXLDistributionGroupMember -Identity "IFF_FIN_OLeary_All" -Member $user.CN -BypassSecurityGroupManagerCheck
+  Add-EXLDistributionGroupMember -Identity "IFF_HR_Suarez_All" -Member $user.CN -BypassSecurityGroupManagerCheck
         }
 
 ### Call Quality Dashboard Exports
@@ -346,4 +347,5 @@ Remove-PSSession $s
 
 }
 
-
+### Enable Unified Messaging for User.
+Enable-o365UMMailbox -Identity $email -UMMailboxPolicy "BT OCM UM Default Policy" -Extensions $telephone -PIN 1234 -SendWelcomeMail $false -PINExpired $true -whatif 

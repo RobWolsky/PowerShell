@@ -83,7 +83,7 @@ Import-PSSession $EXLSession -AllowClobber -Prefix EXL
 Set-EXLAdServerSettings -ViewEntireForest $True                                 
 
 ###   Azure Exchange Local
-$AzureExchServer = "naazeexhybpv2.mail.global.iff.com"
+$AzureExchServer = "naazeexhybpv1.mail.global.iff.com"
 $LocalCredential = Get-Credential "global\rxw1401_e"
 $EXLSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri http://$($AzureExchServer)/PowerShell/ -Authentication Kerberos -Credential $LocalCredential
 Import-PSSession $EXLSession -AllowClobber -Prefix EXL

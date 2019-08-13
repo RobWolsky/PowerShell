@@ -349,3 +349,14 @@ Remove-PSSession $s
 
 ### Enable Unified Messaging for User.
 Enable-o365UMMailbox -Identity $email -UMMailboxPolicy "BT OCM UM Default Policy" -Extensions $telephone -PIN 1234 -SendWelcomeMail $false -PINExpired $true -whatif 
+
+###Compliance Search Commands
+Connect-EXOPSSession -UserPrincipalName rob.wolsky@iff.com
+Connect-IPPSSession -UserPrincipalName rob.wolsky@iff.com
+New-ComplianceSearch -Name "Phishing_maria2" -ExchangeLocation All -ContentMatchQuery "(From:maria.velazquez@powderpure.com) AND (Subject:'DOCUMENT')"
+Start-ComplianceSearch -Identity "Phishing_maria2"
+New-ComplianceSearchAction -SearchName "Phishing_maria2" -Purge -PurgeType HardDelete
+Get-ComplianceSearchAction 
+
+### Replication Services Health Check
+Get-EXLMailboxServer | Test-EXLMRSHealth

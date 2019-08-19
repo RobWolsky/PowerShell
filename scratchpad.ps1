@@ -307,10 +307,10 @@ Set-EXOMailbox gregory.yep@iff.com -ProhibitSendQuota 45GB  -ProhibitSendReceive
 Get-EXOMailbox rob.wolsky@iff.com | Select *quota
 
 ### Workup DL Creation Script from Topological Sort
-$dl = Import-Csv -Path C:\Temp\SusanaSuarez.txt -Header CN, Full, Title
+$dl = Import-Csv -Path C:\Temp\FranciscoFortanet.txt -Header CN, Full, Title
 ForEach ($user in [Array] $dl)
 {
-  Add-EXLDistributionGroupMember -Identity "IFF_HR_Suarez_All" -Member $user.CN -BypassSecurityGroupManagerCheck
+  Add-EXLDistributionGroupMember -Identity "IFF_OPS_Fortanet_All" -Member $user.CN -BypassSecurityGroupManagerCheck -DomainController naazedcpv1
         }
 
 ### Call Quality Dashboard Exports

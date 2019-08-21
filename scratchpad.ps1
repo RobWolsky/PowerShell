@@ -360,3 +360,8 @@ Get-ComplianceSearchAction
 
 ### Replication Services Health Check
 Get-EXLMailboxServer | Test-EXLMRSHealth
+
+### Restrict Mobile Access - options in PowerShell EXO
+Get-EXOActiveSyncDeviceAccessRule | Select Name, AccessLevel
+Get-EXOOrganizationConfig | Select EWS*
+get-EXOCASMailbox rob.wolsky@iff.com

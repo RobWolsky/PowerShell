@@ -333,8 +333,9 @@ Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCS
 Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-UserEnabled'=$TRUE}
 Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-UserPolicies'="{21=1, 1=3, 13=2}"}
 
-### Skype Hybrid Properties - for Skype for Business Online
-set-aduser abc1234 -Replace @{'msRTCSIP-DeploymentLocator'= "SRV:"} -Server usbodcpv3
+### Skype Hybrid Properties - for Skype for Business Online - need rxw1401_e credentials
+$cred = Get-Credential
+set-aduser abc1234 -Replace @{'msRTCSIP-DeploymentLocator'= "SRV:"} -Server usbodcpv3 -Credential $cred
 
 ### Function to Synch Active Directory
 function Sync-Azure {
@@ -365,3 +366,6 @@ Get-EXLMailboxServer | Test-EXLMRSHealth
 Get-EXOActiveSyncDeviceAccessRule | Select Name, AccessLevel
 Get-EXOOrganizationConfig | Select EWS*
 get-EXOCASMailbox rob.wolsky@iff.com
+
+### SharePoint OneDrive for Deleted User
+Set-SPOUser -Site https://iff-my.sharepoint.com/personal/nigel_martyn_iff_com -IsSiteCollectionAdmin $true -LoginName rob.wolsky@iff.com

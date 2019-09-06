@@ -141,7 +141,7 @@ Get-MsolUser -All | ? {(($_.Licenses | Out-String) -notlike "*PACK*") -and (($_.
 $a = Get-MsolUser -All | ? {(($_.Licenses | Out-String) -notlike "*PACK*") -and (($_.BlockCredential -ne $true) -and ($_.MSExchRecipientTypeDetails -ne $null) -and ($_.MSExchRecipientTypeDetails -eq 1)) } ; $a | % {get-aduser -Filter 'UserPrincipalName -eq $_.UserPrincipalName' -Properties iffCountryCode} | Select Name, iffCountryCode | Out-GridView
 
 #User Migration Commands
-get-exomoverequest -Batchname "MigrationService:2018Q2_RandD_NA_Remaining" | Get-EXOMoveRequestStatistics | Select DisplayName, Identity, Status, StatusDetail, TotalMailboxSize, PercentComplete | Out-GridView
+get-exomoverequest -Batchname "MigrationService:AzulRoom" | Get-EXOMoveRequestStatistics | Select DisplayName, Identity, Status, StatusDetail, TotalMailboxSize, PercentComplete | Out-GridView
 New-EXOMoveRequest -Identity "rxw1401" -Remote -RemoteHostName "webmail.iff.com" -TargetDeliveryDomain iff.mail.onmicrosoft.com -RemoteCredential $LocalCredential -BadItemLimit 1000
 
 Get-EXOMoveRequest "Eddie Rosado" | Set-EXOMoveRequest -SuspendWhenReadyToComplete:$false
@@ -307,10 +307,10 @@ Set-EXOMailbox gregory.yep@iff.com -ProhibitSendQuota 45GB  -ProhibitSendReceive
 Get-EXOMailbox rob.wolsky@iff.com | Select *quota
 
 ### Workup DL Creation Script from Topological Sort
-$dl = Import-Csv -Path C:\Temp\FranciscoFortanet.txt -Header CN, Full, Title
+$dl = Import-Csv -Path C:\Temp\VicVerma.txt -Header CN, Full, Title
 ForEach ($user in [Array] $dl)
 {
-  Add-EXLDistributionGroupMember -Identity "IFF_OPS_Fortanet_All" -Member $user.CN -BypassSecurityGroupManagerCheck -DomainController naazedcpv1
+  Add-EXLDistributionGroupMember -Identity "IFF_IT_Verma_All" -Member $user.CN -Confirm:$False -BypassSecurityGroupManagerCheck -DomainController naazedcpv1
         }
 
 ### Call Quality Dashboard Exports
@@ -321,21 +321,7 @@ $clientData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Nam
 $serverData | Export-Csv c:\temp\cqdserver.csv -NoTypeInformation
 $clientData | Export-Csv c:\temp\cqdclient.csv -NoTypeInformation
 
-### Skype Hybrid Properties - for Skype for Business Online
-$user = get-aduser -Filter 'mail -like "CAQC_Mamad*"'
-$credential = Get-Credential
-Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-DeploymentLocator'="sipfed.online.lync.com"}
-Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-FederationEnabled'=$TRUE}
-Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-InternetAccessEnabled'=$TRUE}
-Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-OptionFlags'=257}
-Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-PrimaryHomeServer'="CN=Lc Services,CN=Microsoft,CN=2:1,CN=Pools,CN=RTC Service,CN=Services,CN=Configuration,DC=global,DC=iff,DC=com"}
-Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-PrimaryUserAddress'="sip:" + $user.UserPrincipalName}
-Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-UserEnabled'=$TRUE}
-Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-UserPolicies'="{21=1, 1=3, 13=2}"}
 
-### Skype Hybrid Properties - for Skype for Business Online - need rxw1401_e credentials
-$cred = Get-Credential
-set-aduser abc1234 -Replace @{'msRTCSIP-DeploymentLocator'= "SRV:"} -Server usbodcpv3 -Credential $cred
 
 ### Function to Synch Active Directory
 function Sync-Azure {
@@ -369,3 +355,38 @@ get-EXOCASMailbox rob.wolsky@iff.com
 
 ### SharePoint OneDrive for Deleted User
 Set-SPOUser -Site https://iff-my.sharepoint.com/personal/nigel_martyn_iff_com -IsSiteCollectionAdmin $true -LoginName rob.wolsky@iff.com
+
+### Mail Search from Microsoft
+Start-EXOHistoricalSearch -SenderAddress marie-claude.gingras@lucasmeyercosmetics.com  -StartDate 08/20/2019 -enddate 08/23/2019 -ReportType MessageTracedetail -NotifyAddress rob.wolsky@iff.com -MessageID "<a8a1be0a649e49ccb1433df234b6d0e9@DM6PR19MB2812.namprd19.prod.outlook.com>" -ReportTitle reportMalicious_date_2019
+Start-EXOHistoricalSearch -SenderAddress marie-claude.gingras@lucasmeyercosmetics.com  -StartDate 08/20/2019 -enddate 08/23/2019 -ReportType MessageTracedetail -NotifyAddress rob.wolsky@iff.com -MessageID "a8a1be0a649e49ccb1433df234b6d0e9@DM6PR19MB2812.namprd19.prod.outlook.com" -ReportTitle reportMalicious_date_2019_bis
+
+### Mismatched mailbox GUID preventing migration completion
+Get-RemoteMailbox <alias of cloud mailbox to move> | Format-List ExchangeGUID
+Get-Mailbox usersabc | Format-list ExchangeGuid
+Set-RemoteMailbox userabc -ExchangeGUID f37c610a-5228-4511-9d87-03e4929323ec  (Online MailboxGUID)
+
+
+### Set up Polycom Rooms
+#New-EXLMailbox -UserPrincipalName ESBE_Azul_Room@iff.com -Alias ESBE_Azul_Room -FirstName "ESBE" -LastName "Azul Room" -Name "ESBE Azul Room" -DomainController usbodcpv3 -OrganizationalUnit "OU=Rooms and Equipment,OU=Exchange,OU=iff,DC=global,DC=iff,DC=com " -Room -EnableRoomMailboxAccount $true -RoomMailboxPassword (ConvertTo-SecureString -String P0lycom11 -AsPlainText -Force)
+New-EXLMailbox -UserPrincipalName ESBE_Azul_Room@iff.com -Alias ESBE_Azul_Room -FirstName "ESBE" -LastName "Azul Room" -Name "ESBE Azul Room" -DomainController usbodcpv3 -OrganizationalUnit "global.iff.com/IFF/Exchange/Rooms and Equipment" -Room -EnableRoomMailboxAccount $true -RoomMailboxPassword (ConvertTo-SecureString -String P0lycom11 -AsPlainText -Force)
+
+### Skype Hybrid Properties - for Skype for Business Online - need rxw1401_e credentials
+$user = get-aduser -Filter 'mail -like "CAQC_Mamad*"'
+$credential = Get-Credential
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-DeploymentLocator'="sipfed.online.lync.com"}
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-FederationEnabled'=$TRUE}
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-InternetAccessEnabled'=$TRUE}
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-OptionFlags'=257}
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-PrimaryHomeServer'="CN=Lc Services,CN=Microsoft,CN=2:1,CN=Pools,CN=RTC Service,CN=Services,CN=Configuration,DC=global,DC=iff,DC=com"}
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-PrimaryUserAddress'="sip:" + $user.UserPrincipalName}
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-UserEnabled'=$TRUE}
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-UserPolicies'="{21=1, 1=3, 13=2}"}
+
+Add-ADGroupMember -Identity "okta_all_iff_users_hr" -Members abc1234
+
+$pool="sippoolBLU1A11.infra.lync.com"
+Enable-CsMeetingRoom -Identity ESBE_Azul_Room@iff.com -RegistrarPool $pool -SipAddressType EmailAddress 
+
+### Skype Hybrid Properties - for Skype for Business Online - need rxw1401_e credentials
+$cred = Get-Credential
+set-aduser abc1234 -Replace @{'msRTCSIP-DeploymentLocator'= "SRV:"} -Server usbodcpv3 -Credential $cred

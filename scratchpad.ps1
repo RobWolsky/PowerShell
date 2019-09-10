@@ -341,7 +341,9 @@ Enable-o365UMMailbox -Identity $email -UMMailboxPolicy "BT OCM UM Default Policy
 Connect-EXOPSSession -UserPrincipalName rob.wolsky@iff.com
 Connect-IPPSSession -UserPrincipalName rob.wolsky@iff.com
 New-ComplianceSearch -Name "Phishing_maria2" -ExchangeLocation All -ContentMatchQuery "(From:maria.velazquez@powderpure.com) AND (Subject:'DOCUMENT')"
+New-ComplianceSearch -Name "Password4534" -ExchangeLocation All -ContentMatchQuery "Password- 4534"
 Start-ComplianceSearch -Identity "Phishing_maria2"
+Start-ComplianceSearch -Identity "Password4534"
 New-ComplianceSearchAction -SearchName "Phishing_maria2" -Purge -PurgeType HardDelete
 Get-ComplianceSearchAction 
 

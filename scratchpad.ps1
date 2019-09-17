@@ -283,6 +283,7 @@ Get-EXLReceiveConnector -Identity "IFFANDFE01\SharePoint 2010 Outgoing Email" | 
 Get-EXOTransportConfig | fl maxreceivesize,maxsendsize
 Get-EXOMailboxPlan | fl name,maxsendsize,maxreceivesize,isdefault
 Get-EXOMailbox -Resultsize Unlimited | Set-Mailbox -MaxReceiveSize 150MB -MaxSendSize 150MB
+Get-EXOMailbox ROB.WOLSKY@IFF.COM | fl mailboxplan,maxsendsize,maxreceivesize
 
 #Autodiscover Internal URI
 Get-EXLClientAccessServer | Select Identity, AutoDiscoverServiceInternalUri, AutoDiscoverSiteScope
@@ -306,11 +307,11 @@ Set-EXLMailContact -Identity "Anna Corless" -EmailAddressPolicyEnabled:$False
 Set-EXOMailbox gregory.yep@iff.com -ProhibitSendQuota 45GB  -ProhibitSendReceiveQuota 50GB  -IssueWarningQuota 40GB
 Get-EXOMailbox rob.wolsky@iff.com | Select *quota
 
-### Workup DL Creation Script from Topological Sort
-$dl = Import-Csv -Path C:\Temp\VicVerma.txt -Header CN, Full, Title
+### Distribution List Creation from Topological Sort output
+$dl = Import-Csv -Path C:\Temp\ShawnBlythe.txt -Header CN, Full, Title
 ForEach ($user in [Array] $dl)
 {
-  Add-EXLDistributionGroupMember -Identity "IFF_IT_Verma_All" -Member $user.CN -Confirm:$False -BypassSecurityGroupManagerCheck -DomainController naazedcpv1
+  Add-EXLDistributionGroupMember -Identity "IFF_GRA_Blythe_All" -Member $user.CN -Confirm:$False -BypassSecurityGroupManagerCheck -DomainController naazedcpv1
         }
 
 ### Call Quality Dashboard Exports
@@ -392,3 +393,7 @@ Enable-CsMeetingRoom -Identity ESBE_Azul_Room@iff.com -RegistrarPool $pool -SipA
 ### Skype Hybrid Properties - for Skype for Business Online - need rxw1401_e credentials
 $cred = Get-Credential
 set-aduser abc1234 -Replace @{'msRTCSIP-DeploymentLocator'= "SRV:"} -Server usbodcpv3 -Credential $cred
+
+
+### Vaya Pharma Inventory
+get-enzmailbox -Filter 'WindowsEmailAddress -like "*@vayapharma.com"' | Select DisplayName, AccountDisabled, UserPrincipalName, LitigationHoldEnabled, WindowsEmail* | Out-Gridview

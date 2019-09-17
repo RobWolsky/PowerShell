@@ -93,6 +93,11 @@ Set-EXLAdServerSettings -ViewEntireForest $True
 $EXOSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $CloudCred -Authentication Basic -AllowRedirection
 Import-PSSession $EXOSession –AllowClobber -Prefix EXO
 
+###   Exchange Online - Enzymotec/Vaya
+$ECred = get-credential
+$ENZSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $ECred -Authentication Basic -AllowRedirection
+Import-PSSession $ENZSession –AllowClobber -Prefix ENZ
+
 
 ### Exchange Online Protection
 $EOPSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.protection.outlook.com/powershell-liveid/ -Credential $CloudCred -Authentication Basic -AllowRedirection

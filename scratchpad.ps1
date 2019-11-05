@@ -308,10 +308,10 @@ Set-EXOMailbox gregory.yep@iff.com -ProhibitSendQuota 45GB  -ProhibitSendReceive
 Get-EXOMailbox rob.wolsky@iff.com | Select *quota
 
 ### Distribution List Creation from Topological Sort output
-$dl = Import-Csv -Path C:\Temp\Mirzayantz.txt -Header CN, Full, Title
+$dl = Import-Csv -Path C:\Temp\ValeryClaude.txt -Header CN, Full, Title
 ForEach ($user in [Array] $dl)
 {
-  Add-EXLDistributionGroupMember -Identity "IFF_SCENT_Mirzayantz_All" -Member $user.CN -Confirm:$False -BypassSecurityGroupManagerCheck -DomainController naazedcpv1
+  Add-EXLDistributionGroupMember -Identity "IFF_KCP_Claude_All" -Member $user.CN -Confirm:$False -BypassSecurityGroupManagerCheck -DomainController naazedcpv1
         }
 
 ### Call Quality Dashboard Exports

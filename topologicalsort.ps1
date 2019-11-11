@@ -117,6 +117,7 @@ function get-directreports
 # Example: .\topologicalsort.ps1 "CN=mxk8705,OU=EMPLOYEE,OU=HV,OU=NL,OU=EAME,OU=IFF,DC=global,DC=iff,DC=com"
 # Example: .\topologicalsort.ps1 "CN=nxm5240,OU=EMPLOYEE,OU=NY,OU=US,OU=NA,OU=IFF,DC=global,DC=iff,DC=com"
 # Example: .\topologicalsort.ps1 "CN=GXS9728,OU=EMPLOYEE,OU=NY,OU=US,OU=NA,OU=IFF,DC=global,DC=iff,DC=com"
+# Example: .\topologicalsort.ps1 "CN=VVC2130,OU=EMPLOYEE,OU=HV,OU=NL,OU=EAME,OU=IFF,DC=global,DC=iff,DC=com"
 #------------------------------------------------------------------------------------------
 
 #Turning off the errors and warnings.

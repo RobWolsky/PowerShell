@@ -397,3 +397,6 @@ set-aduser abc1234 -Replace @{'msRTCSIP-DeploymentLocator'= "SRV:"} -Server usbo
 
 ### Vaya Pharma Inventory
 get-enzmailbox -Filter 'WindowsEmailAddress -like "*@vayapharma.com"' | Select DisplayName, AccountDisabled, UserPrincipalName, LitigationHoldEnabled, WindowsEmail* | Out-Gridview
+
+###Cobol disco stuff for John
+Get-ADUser -Filter '(Enabled -eq $false) -And (msExchRecipientTypeDetails -eq "2147483648")' -Properties * | Select Name, iff* | Out-Gridview

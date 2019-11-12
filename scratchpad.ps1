@@ -400,3 +400,5 @@ get-enzmailbox -Filter 'WindowsEmailAddress -like "*@vayapharma.com"' | Select D
 
 ###Cobol disco stuff for John
 Get-ADUser -Filter '(Enabled -eq $false) -And (msExchRecipientTypeDetails -eq "2147483648")' -Properties * | Select Name, iff* | Out-Gridview
+
+get-exomailbox rob.wolsky@iff.com | Select * | FL

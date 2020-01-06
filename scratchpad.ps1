@@ -299,13 +299,14 @@ $a.AuditData | ConvertFrom-Json | Select -Property UserId, ResultStatus, Creatio
 #Conference Room Delegates for Office 365
 get-exomailbox RDNJDelegateTest | Set-EXOCalendarProcessing -AllBookInPolicy:$false -AllRequestInPolicy:$false -BookInPolicy "ITGlobal@iff.com", "Rob.Wolsky@iff.com"
 get-exomailbox RDNJ_ConfRmC | Set-EXOCalendarProcessing -AllBookInPolicy:$false -AllRequestInPolicy:$false -BookInPolicy "ITGlobal@iff.com", "maryanne.elfstrom@iff.com", "danielle.cocuzza@iff.com", "fran.parkinson@iff.com", "veronica.cocuzza@iff.com", "maria.molloy@iff.com", "fara.alvarez@iff.com", "Deb.Kieselowsky@IFF.com", "Soumya.Thankam@IFF.com"
+get-exomailbox RDNJ_ConfRmC | Set-EXOCalendarProcessing -AllBookInPolicy:$false -AllRequestInPolicy:$false -BookInPolicy "Patricia.Carney@iff.com", "Robert.Szpila@iff.com", "Heather.Doherty@IFF.com", "Drew.Riegler@iff.com", "Kishore.Gunturu@iff.com", "Rob.Wolsky@iff.com"
 
 ### Exlude Contact from Email Policy
 Set-EXLMailContact -Identity "Anna Corless" -EmailAddressPolicyEnabled:$False
 
 ### Set Mailbox Quotas - Office 365
-Set-EXOMailbox gregory.yep@iff.com -ProhibitSendQuota 45GB  -ProhibitSendReceiveQuota 50GB  -IssueWarningQuota 40GB
-Get-EXOMailbox rob.wolsky@iff.com | Select *quota
+Set-EXOMailbox nanci.prado@iff.com -ProhibitSendQuota 45GB  -ProhibitSendReceiveQuota 50GB  -IssueWarningQuota 40GB
+Get-EXOMailbox nanci.prado@iff.com | Select *quota
 
 ### Distribution List Creation from Topological Sort output
 $dl = Import-Csv -Path C:\Temp\ValeryClaude.txt -Header CN, Full, Title

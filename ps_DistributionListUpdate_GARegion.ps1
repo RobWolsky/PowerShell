@@ -27,7 +27,7 @@
 $OUandGROUP = @{}
 
 #Populate Hash Table with OU's and target Distribution Groups
-<#
+
 $OUandGROUP.Add("global.iff.com/IFF/GA/AU/DN/EMPLOYEE", "exPS_AllDandenongEmp")
 $OUandGROUP.Add("global.iff.com/IFF/GA/AU/DN/NONEMPLOYEES", "exPS_AllDandenongNonEmp")
 $OUandGROUP.Add("global.iff.com/IFF/GA/AU/LC/EMPLOYEE", "exPS_AllLane CoveEmp")
@@ -56,10 +56,8 @@ $OUandGROUP.Add("global.iff.com/IFF/GA/IN/CA/EMPLOYEE", "exPS_AllCalcuttaEmp")
 $OUandGROUP.Add("global.iff.com/IFF/GA/IN/CA/NONEMPLOYEES", "exPS_AllCalcuttaNonEmp")
 $OUandGROUP.Add("global.iff.com/IFF/GA/IN/CH/EMPLOYEE", "exPS_AllChennaiEmp")
 $OUandGROUP.Add("global.iff.com/IFF/GA/IN/CH/NONEMPLOYEES", "exPS_AllChennaiNonEmp")
-#>
 $OUandGROUP.Add("global.iff.com/IFF/GA/IN/CF/EMPLOYEE", "exPS_AllTMDEmp")
 $OUandGROUP.Add("global.iff.com/IFF/GA/IN/CF/NONEMPLOYEES", "exPS_AllTMDNonEmp")
-<#
 $OUandGROUP.Add("global.iff.com/IFF/GA/IN/IT/EMPLOYEE", "exPS_AllGuindyEmp")
 $OUandGROUP.Add("global.iff.com/IFF/GA/IN/IT/NONEMPLOYEES", "exPS_AllGuindyNonEmp")
 $OUandGROUP.Add("global.iff.com/IFF/GA/IN/CI/EMPLOYEE", "exPS_AllChittoorEmp")
@@ -92,7 +90,6 @@ $OUandGROUP.Add("global.iff.com/IFF/GA/TH/BS/EMPLOYEE", "exPS_AllBangkok-OfficeE
 $OUandGROUP.Add("global.iff.com/IFF/GA/TH/BS/NONEMPLOYEES", "exPS_AllBangkok-OfficeNonEmp")
 #>
 
-
 #Enumerate Hash Table and update group memberships
 
 $OUandGROUP.GetEnumerator() | ForEach-Object{
@@ -101,7 +98,7 @@ $OUandGROUP.GetEnumerator() | ForEach-Object{
         $message = 'OU {0} users will be added to Group: {1}' -f $OU, $GROUP
         Write-Host $message -fore gray -back red
         $a = Get-EXLRecipient -RecipientType MailUser, UserMailbox -OrganizationalUnit $OU | Select Name, SamAccountName, PrimarySMTPAddress, RecipientType, OrganizationalUnit
-        Update-EXLDistributionGroupMember -Identity $GROUP -Members $a.PrimarySMTPAddress #-Confirm:$false
+        Update-EXLDistributionGroupMember -DomainController usbodcpv3 -Identity $GROUP -Members $a.PrimarySMTPAddress -Confirm:$false
         
 }
 

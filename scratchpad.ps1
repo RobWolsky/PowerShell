@@ -340,12 +340,15 @@ Remove-PSSession $s
 Enable-o365UMMailbox -Identity $email -UMMailboxPolicy "BT OCM UM Default Policy" -Extensions $telephone -PIN 1234 -SendWelcomeMail $false -PINExpired $true -whatif 
 
 ###Compliance Search Commands
-Connect-EXOPSSession -UserPrincipalName rob.wolsky@iff.com
+# Need to run Remote Powershell Module in another window, cut and paste these commands
+#Connect-EXOPSSession -UserPrincipalName rob.wolsky@iff.com
 Connect-IPPSSession -UserPrincipalName rob.wolsky@iff.com
-New-ComplianceSearch -Name "Phishing_maria2" -ExchangeLocation All -ContentMatchQuery "(From:maria.velazquez@powderpure.com) AND (Subject:'DOCUMENT')"
-New-ComplianceSearch -Name "Password4534" -ExchangeLocation All -ContentMatchQuery "Password- 4534"
-Start-ComplianceSearch -Identity "Phishing_maria2"
+New-ComplianceSearch -Name "Phishing_Bdelcarlo" -ExchangeLocation All -ContentMatchQuery "(From:b.delcarlo@chiesi.com) AND (Subject:'e-Payment Invoice Approved Chiesi TR')"
+New-ComplianceSearch -Name "Phishing_Azabrodina" -ExchangeLocation All -ContentMatchQuery "(From:alexandra.zabrodina@iff.com) AND (Subject:'e-payment invoice approved')"
+New-ComplianceSearch -Name "Phishing_Azabrodina" -ExchangeLocation All -ContentMatchQuery "Password- 4534"
+Start-ComplianceSearch -Identity "Phishing_Bdelcarlo"
 Start-ComplianceSearch -Identity "Password4534"
+get-compliancesearch phishing_bdelcarlo | select Items | fl
 New-ComplianceSearchAction -SearchName "Phishing_maria2" -Purge -PurgeType HardDelete
 Get-ComplianceSearchAction 
 

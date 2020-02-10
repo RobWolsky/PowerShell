@@ -343,12 +343,19 @@ Enable-o365UMMailbox -Identity $email -UMMailboxPolicy "BT OCM UM Default Policy
 # Need to run Remote Powershell Module in another window, cut and paste these commands
 #Connect-EXOPSSession -UserPrincipalName rob.wolsky@iff.com
 Connect-IPPSSession -UserPrincipalName rob.wolsky@iff.com
+
+#Alternate for VSCode Window
+$UserCredential = Get-Credential
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.compliance.protection.outlook.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
+Import-PSSession $Session -DisableNameChecking
+
+# Commpliance Search Commands
 New-ComplianceSearch -Name "Phishing_Bdelcarlo" -ExchangeLocation All -ContentMatchQuery "(From:b.delcarlo@chiesi.com) AND (Subject:'e-Payment Invoice Approved Chiesi TR')"
 New-ComplianceSearch -Name "Phishing_Azabrodina" -ExchangeLocation All -ContentMatchQuery "(From:alexandra.zabrodina@iff.com) AND (Subject:'e-payment invoice approved')"
 New-ComplianceSearch -Name "Phishing_Azabrodina" -ExchangeLocation All -ContentMatchQuery "Password- 4534"
 Start-ComplianceSearch -Identity "Phishing_Bdelcarlo"
 Start-ComplianceSearch -Identity "Password4534"
-get-compliancesearch phishing_bdelcarlo | select Items | fl
+Get-ComplianceSearch "Phishing_Bdelcarlo" | Select-Object Items | FL
 New-ComplianceSearchAction -SearchName "Phishing_maria2" -Purge -PurgeType HardDelete
 Get-ComplianceSearchAction 
 

@@ -23,10 +23,10 @@ function escapeSpecialCharacters($string) {
 	return $string
 }
 
-$password = escapeSpecialCharacters("Password Goes Here")
+$password = escapeSpecialCharacters("ITglobalcomms2020!")
 
 $settings = @{
-	"API_USER" = "ad-api@yourcompany.com";
+	"API_USER" = "donna.cornwell@iff.com";
 	"API_PASSWORD" = "$($password)";
 	"AD_SERVER" = "usubdcpv1:3268";
 	"EXCHANGE_SERVER" = "webmail.iff.com";
@@ -36,4 +36,4 @@ $settings = @{
 	"PROFILE" = "false";
 }
 
-Export-Clixml -Path nw-config.xml -InputObject $settings
+Export-Clixml -Path c:\temp\nw-config.xml -InputObject $settings

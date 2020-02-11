@@ -4,7 +4,7 @@
 # Created: [11/06/2017]
 # Author: Rob Wolsky
 # Company: NovaTech Group
-# Email: rob.wolsky@novatechgroup.onmicrosoft.com
+# Email: rob.wolsky@ntekcloud.com
 # Requirements: OU and Distribution Group pairs are embedded in the script
 # Requirements: These must be updated as required to reflect changes in AD
 # Requirements: 

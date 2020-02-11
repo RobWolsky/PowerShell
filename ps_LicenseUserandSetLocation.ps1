@@ -4,7 +4,7 @@
 # Created: [12/20/2017]
 # Author: Rob Wolsky
 # Company: NovaTech Group
-# Email: rob.wolsky@novatechgroup.onmicrosoft.com
+# Email: rob.wolsky@ntekcloud.com
 # Requirements: CSV file containing user UPN's to license post-migration
 # Requirements: List relevant identities in c:\Temp\upn_batch.csv (header UPN)
 # Requirements: 

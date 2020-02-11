@@ -4,7 +4,7 @@
 # Created: [07/27/2017]
 # Author: Rob Wolsky
 # Company: NovaTech Group
-# Email: rob.wolsky@novatechgroup.onmicrosoft.com
+# Email: rob.wolsky@ntekcloud.com
 # Requirements: CSV file containing mailboxes to search by CN or UPN
 # Requirements: List relevant identities in c:\Temp\sendas.csv (header Name)
 # Requirements: 

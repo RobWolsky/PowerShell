@@ -413,3 +413,6 @@ get-enzmailbox -Filter 'WindowsEmailAddress -like "*@vayapharma.com"' | Select D
 Get-ADUser -Filter '(Enabled -eq $false) -And (msExchRecipientTypeDetails -eq "2147483648")' -Properties * | Select Name, iff* | Out-Gridview
 
 get-exomailbox rob.wolsky@iff.com | Select * | FL
+
+# Audit all Admin Role assignments in O365 Portal
+Get-MsolRole | %{$role = $_.name; Get-MsolRoleMember -RoleObjectId $_.objectid} | select @{Name="Role"; Expression = {$role}}, DisplayName, EmailAddress | Export-Csv -Path "c:\temp\AdminRoles.csv"

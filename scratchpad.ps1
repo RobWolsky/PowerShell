@@ -416,3 +416,7 @@ get-exomailbox rob.wolsky@iff.com | Select * | FL
 
 # Audit all Admin Role assignments in O365 Portal
 Get-MsolRole | %{$role = $_.name; Get-MsolRoleMember -RoleObjectId $_.objectid} | select @{Name="Role"; Expression = {$role}}, DisplayName, EmailAddress | Export-Csv -Path "c:\temp\AdminRoles.csv"
+
+# Determine required Role for any Cmdlet. Works both EXL and EXO
+$Perms = Get-EXLManagementRole -Cmdlet Update-DistributionGroupMember
+$perms | foreach {Get-EXLManagementRoleAssignment -Role $_.Name -Delegating $false | Format-Table -Auto Role,RoleAssigneeType,RoleAssigneeName}

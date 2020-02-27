@@ -420,3 +420,23 @@ Get-MsolRole | %{$role = $_.name; Get-MsolRoleMember -RoleObjectId $_.objectid} 
 # Determine required Role for any Cmdlet. Works both EXL and EXO
 $Perms = Get-EXLManagementRole -Cmdlet Update-DistributionGroupMember
 $perms | foreach {Get-EXLManagementRoleAssignment -Role $_.Name -Delegating $false | Format-Table -Auto Role,RoleAssigneeType,RoleAssigneeName}
+
+#External Sharing settings for SharePoint site incl. user OneDrive
+get-sposite -identity https://iff-my.sharepoint.com/personal/jonathan_sheehy_iff_com | Select * | FL
+get-sposite -identity https://iff-my.sharepoint.com/personal/jonathan_sheehy_iff_com | Select SharingCapability
+
+#Find the FRUTs
+Get-EXORecipient -ResultSize Unlimited | Where {($_.RecipientType -eq "UserMailbox") -AND (($_.PrimarySMTPAddress -like "*frutarom.com*")-OR ($_.PrimarySMTPAddress -like "*ibrweb.com*") -OR ($_.PrimarySMTPAddress -like "*taiga*") -OR ($_.PrimarySMTPAddress -like "*savoury*") -OR ($_.PrimarySMTPAddress -like "*nutrafur*") -OR ($_.PrimarySMTPAddress -like "*ingrenat*") -OR ($_.PrimarySMTPAddress -like "*extrakt*") -OR ($_.PrimarySMTPAddress -like "*aromco*") -OR ($_.PrimarySMTPAddress -like "*vaya*") -OR ($_.PrimarySMTPAddress -like "*enzym*"))} | Select DisplayName, RetentionPolicy, PrimarySMTPAddress, WindowsLiveID | Out-Gridview
+
+#Get all user OneDrives
+$LogFile = [Environment]::GetFolderPath("Desktop") + "\OneDriveSites.log"
+Get-SPOSite -IncludePersonalSite $true -Limit All -Filter "Url -like '-my.sharepoint.com/personal/'" | Select -ExpandProperty Url | Out-File $LogFile -Force
+Write-Host "Done! File saved as $($LogFile)."
+
+#Working on members in AppStream groups
+$g = get-content C:\temp\fleetgroups.txt
+ForEach ($grp in [Array] $g)
+{
+$c = (Get-ADGroupMember -Identity $grp).Count
+Write-Host $grp, $c
+}

@@ -1,7 +1,6 @@
 ﻿#Syntax to connect to EAC on Hybrid server and force 2013 (useful if I have a 2010 mailbox)
 #https://CAS15-NA/ecp/?ExchClientVer=15
 
-
 #Properties to expose AccessRights as Array
 get-mailbox "rxw1401*" | Get-MailboxPermission | Select User,AccessRights | FT
 get-EXLmailbox "OPR2036" | Get-EXLMailboxPermission | ? {($_.AccessRights -like “*FullAccess*”) -and ($_.IsInherited -eq $false) -and ($_.User -notlike “NT AUTHORITY\SELF”) -and ($_.User -notlike "S-1-5*") -and ($_.User -notlike $Mailbox.PrimarySMTPAddress)} | Select User,AccessRights | FT

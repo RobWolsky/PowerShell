@@ -91,22 +91,22 @@ Set-EXLAdServerSettings -ViewEntireForest $True
 
 ###   Exchange Online
 $EXOSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $CloudCred -Authentication Basic -AllowRedirection
-Import-PSSession $EXOSession –AllowClobber -Prefix EXO
+Import-PSSession $EXOSession -AllowClobber -Prefix EXO
 
 ###   Exchange Online - Enzymotec/Vaya
 $ECred = get-credential
 $ENZSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $ECred -Authentication Basic -AllowRedirection
-Import-PSSession $ENZSession –AllowClobber -Prefix ENZ
+Import-PSSession $ENZSession -AllowClobber -Prefix ENZ
 
 
 ### Exchange Online Protection
 $EOPSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.protection.outlook.com/powershell-liveid/ -Credential $CloudCred -Authentication Basic -AllowRedirection
-Import-PSSession $EOPSession –AllowClobber -Prefix EOP
+Import-PSSession $EOPSession -AllowClobber -Prefix EOP
 
 
 ### Compliance Center
 $ccSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri "https://ps.compliance.protection.outlook.com/powershell-liveid/" -Credential $CloudCred -Authentication "Basic" -AllowRedirection
-Import-PSSession $ccSession –AllowClobber -Prefix CC
+Import-PSSession $ccSession -AllowClobber -Prefix CC
 
 
 ### Azure Active Directory Rights Management
@@ -130,13 +130,13 @@ Connect-SPOService -Url "https://iff-admin.sharepoint.com"
 
 ### Skype Online
 Import-Module SkypeOnlineConnector
-$SkypeSession = New-CsOnlineSession #-Credential rob.wolsky@iff.com –OverrideAdminDomain "iff.onmicrosoft.com" 
-Import-PSSession $SkypeSession –AllowClobber
+$SkypeSession = New-CsOnlineSession #-Credential rob.wolsky@iff.com -OverrideAdminDomain "iff.onmicrosoft.com" 
+Import-PSSession $SkypeSession -AllowClobber
 
 ### Skype/Lync Local
 #$LocalCredential = Get-Credential 
 $LyncSession = New-PSSession -ConnectionUri "https://iffandfe04.mail.global.iff.com/PowerShell" -Credential $LocalCredential
-Import-PSSession $LyncSession –AllowClobber
+Import-PSSession $LyncSession -AllowClobber
 
 $Lync = New-PSSession -ComputerName "iffandfe04.mail.global.iff.com"
 Invoke-Command -Session $Lync {Import-Module Lync}
@@ -145,16 +145,16 @@ Import-PSSession -Session $Lync -Module Lync
 ### Skype/Lync BTOCM
 $LocalCredential = Get-Credential 
 $LyncSession = New-PSSession -ConnectionUri "https://lonwebint01.iff.com/Powershell" -Credential $LocalCredential
-Import-PSSession $LyncSession –AllowClobber
+Import-PSSession $LyncSession -AllowClobber
 
 ### Azure AD v2.0
 Connect-AzureAD -Credential $CloudCred
 
 
 ### Azure AD Connect (DirSync)
-$ADConnectSession = New-PSSession -Computername $AzureADConnect -Credential $AzureADCred
-Invoke-Command -Session $ADConnectSession {Import-Module ADSync}
-Import-PSSession -Session $ADConnectSession -Module ADSync 
+$ADConnectSession-=-New-PSSession--Computername-$AzureADConnect -Credential $AzureADCred
+Invoke-Command--Session-$ADConnectSession-{Import-Module-ADSync}
+Import-PSSession--Session-$ADConnectSession--Module-ADSync-
 
 ### Connect to Teams
 Import-Module MicrosoftTeams

@@ -438,4 +438,8 @@ ForEach ($grp in [Array] $g)
 {
 $c = (Get-ADGroupMember -Identity $grp).Count
 Write-Host $grp, $c
+Get-ADGroupMember -Identity $grp | Select DisplayName, UserPrincipalName | Out-GridView
 }
+
+#New Shared Mailbox
+New-EXLRemotemailbox -Shared -DomainController usbodcpv3 -Alias HilversumCorona -Name "Hilversum Corona Crisis Team" -FirstName Hilversum -LastName "Corona Crisis Team" -OnPremisesOrganizationalUnit "OU=exGROUPS,OU=EXCHANGE,OU=IFF,DC=GLOBAL,DC=IFF,DC=COM" -SamAccountName HilversumCorona -UserPrincipalName HilversumCorona@iff.com

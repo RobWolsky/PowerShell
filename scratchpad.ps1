@@ -2,11 +2,11 @@
 #https://CAS15-NA/ecp/?ExchClientVer=15
 
 #Properties to expose AccessRights as Array
-get-mailbox "rxw1401*" | Get-MailboxPermission | Select User,AccessRights | FT
-get-EXLmailbox "OPR2036" | Get-EXLMailboxPermission | ? {($_.AccessRights -like “*FullAccess*”) -and ($_.IsInherited -eq $false) -and ($_.User -notlike “NT AUTHORITY\SELF”) -and ($_.User -notlike "S-1-5*") -and ($_.User -notlike $Mailbox.PrimarySMTPAddress)} | Select User,AccessRights | FT
+get-mailbox "rxw1401*" | Get-MailboxPermission | Select User, AccessRights | FT
+get-EXLmailbox "OPR2036" | Get-EXLMailboxPermission | ? { ($_.AccessRights -like “*FullAccess*”) -and ($_.IsInherited -eq $false) -and ($_.User -notlike “NT AUTHORITY\SELF”) -and ($_.User -notlike "S-1-5*") -and ($_.User -notlike $Mailbox.PrimarySMTPAddress) } | Select User, AccessRights | FT
 
-#Properties to expose GrantSendOnBehalfTo 
-Get-Mailbox -ResultSize 300 | ? {$_.GrantSendOnBehalfTo} | Select DisplayName, Name, GrantSendOnBehalfTo | Out-GridView
+#Properties to expose GrantSendOnBehalfTo
+Get-Mailbox -ResultSize 300 | ? { $_.GrantSendOnBehalfTo } | Select DisplayName, Name, GrantSendOnBehalfTo | Out-GridView
 
 #Command to get what I need from Get-AdUser
 get-aduser -Filter "*" -Properties DisplayName, Mail, Manager, Office | Select DisplayName, Name, UserPrincipalName, Mail, Office, Manager | Out-GridView
@@ -16,16 +16,16 @@ Get-ADUser -Filter 'Name -like "*_*"' -Properties DisplayName, Manager, Office |
 
 
 #Command to get what I need from Get-ADPermission (ExtendedRights holds Send-As)
-Get-ADPermission -Identity rxw1401 | ? {$_.ExtendedRights} | Select User,Identity,ExtendedRights | FT
+Get-ADPermission -Identity rxw1401 | ? { $_.ExtendedRights } | Select User, Identity, ExtendedRights | FT
 
 #Command to export Mailbox "Name" field for import to sendas script
 Get-Mailbox -ResultSize unlimited | Select Name | Export-CSV -Path 'c:\Temp\sendas.csv' -notype
 
 #Get the resource Mailboxes, with ResourceType
-Get-Mailbox -ResultSize unlimited | ? {$_.IsResource} | Select Name, DisplayName, SAMAccountName, IsResource, ResourceType | Out-GridView
+Get-Mailbox -ResultSize unlimited | ? { $_.IsResource } | Select Name, DisplayName, SAMAccountName, IsResource, ResourceType | Out-GridView
 
 #Get the Shared Mailboxes. IFF uses CustomAttribute15 to tag shared mailboxes.
-Get-Mailbox -ResultSize unlimited | ? {($_.CustomAttribute15 | Out-String).Contains("Shared")} | Select Name, DisplayName, UserPrincipalName, SAMAccountName, OrganizationalUnit, CustomAttribute15 | Out-GridView
+Get-Mailbox -ResultSize unlimited | ? { ($_.CustomAttribute15 | Out-String).Contains("Shared") } | Select Name, DisplayName, UserPrincipalName, SAMAccountName, OrganizationalUnit, CustomAttribute15 | Out-GridView
 
 #Find Mailbox and MailUser objects for distribution lists
 Get-Recipient -RecipientType UserMailbox -ResultSize 100 | Select Name, SamAccountName, PrimarySMTPAddress, RecipientType, OrganizationalUnit | Out-GridView
@@ -34,15 +34,15 @@ $a = Get-Recipient -RecipientType MailUser, UserMailbox -OrganizationalUnit glob
 Update-DistributionGroupMember -Identity "AllUsersPHTPEmpPSTest" -Members $a.PrimarySMTPAddress -Confirm:$false
 
 #ISE Setup Commands
-RemoteExchange.ps1                                                                                   
-add-pssnapin Microsoft.Exchange.Management.PowerShell.E2010                                            
-Set-EXLAdServerSettings -ViewEntireForest $True                                 
+RemoteExchange.ps1
+add-pssnapin Microsoft.Exchange.Management.PowerShell.E2010
+Set-EXLAdServerSettings -ViewEntireForest $True
 #Connect-ExchangeServer - auto
 
 #$UserCredential = Get-Credential "axc1935@global.iff.com"
 $UserCredential = Get-Credential "rxw1401_e@global.iff.com"
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
-#$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.outlook.com/powershell -Credential $UserCredential -Authentication Basic -AllowRedirection 
+#$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.outlook.com/powershell -Credential $UserCredential -Authentication Basic -AllowRedirection
 
 Import-PSSession $Session -AllowClobber
 
@@ -56,8 +56,8 @@ Connect-AzureAD -Credential $UserCredential
 
 
 
- #Get-Module -ListAvailable
- #Get-Command -Module PackageManagement
+#Get-Module -ListAvailable
+#Get-Command -Module PackageManagement
 
 
 
@@ -74,10 +74,10 @@ Get-EXLMailbox -ResultSize Unlimited -RecipientType UserMailbox | Select Name, P
 
 #Get-MailboxFolder
 
-Get-EXLDistributionGroup | ? {($_.DisplayName | Out-String).Contains("Employee")} | Select Alias, OrganizationalUnit
-Get-EXLOrganizationalUnit -SearchText "EMPLOYEE" | ? {($_.CanonicalName | Out-String) -notlike "*NO**"} | Select CanonicalName | Sort-Object CanonicalName | Out-GridView
-Get-EXLOrganizationalUnit -SearchText "EMPLOYEE" | Select DistinguishedName| Sort-Object DistinguishedName | Out-GridView
-Get-ADuser -Filter * -SearchBase $_objectItem.DistinguishedName -SearchScope OneLevel  | measure | select Count  
+Get-EXLDistributionGroup | ? { ($_.DisplayName | Out-String).Contains("Employee") } | Select Alias, OrganizationalUnit
+Get-EXLOrganizationalUnit -SearchText "EMPLOYEE" | ? { ($_.CanonicalName | Out-String) -notlike "*NO**" } | Select CanonicalName | Sort-Object CanonicalName | Out-GridView
+Get-EXLOrganizationalUnit -SearchText "EMPLOYEE" | Select DistinguishedName | Sort-Object DistinguishedName | Out-GridView
+Get-ADuser -Filter * -SearchBase $_objectItem.DistinguishedName -SearchScope OneLevel | measure | select Count
 New-DistributionGroup -Name "exPS" -DisplayName "exPS" -Alias "exPS" -OrganizationalUnit "global.iff.com/IFF/NA/US/PH/Exchange/ExGroups" -ManagedBy "llm7786" -Notes "Group created to replace dynamic distribution lists. See Louis Muniz" -Type "Distribution" -Confirm:$False
 
 
@@ -86,13 +86,13 @@ New-DistributionGroup -Name "exPS" -DisplayName "exPS" -Alias "exPS" -Organizati
 ## This can be a remote PC name as well
 $pc = '.'
 $cert_store = 'My'
- 
-$store = New-Object system.security.cryptography.X509Certificates.X509Store ("\$pcMy"),'LocalMachine' #LocalMachine could also be LocalUser
+
+$store = New-Object system.security.cryptography.X509Certificates.X509Store ("\$pcMy"), 'LocalMachine' #LocalMachine could also be LocalUser
 $store.Open('ReadWrite')
 ## Find all certs that have an Issuer of my old CA
 $certs = $store.Certificates # | ? {$_.Issuer -eq 'CN=HOST.DOMAIN.COM, DC=DOMAIN, DC=EXT'}
 ## Remove all the certs it finds
-$certs | % {$store.Remove($_)}
+$certs | % { $store.Remove($_) }
 
 #Complete individual mailbox from within a migration batch
 Get-MoveRequest -Identity mailbox@domain.com | Set-MoveRequest -SuspendWhenReadyToComplete:$false -preventCompletion:$false -CompleteAfter 5
@@ -107,7 +107,7 @@ Set-EXLDistributionGroup -Identity "exPS_All_TESTPSSCRIPT_RW" -HiddenFromAddress
 $user1 = get-aduser -Identity "rxw1401" -Properties "Certificates"
 $user1.Certificates
 
-Get-EXLMailbox -Arbitration | FL Name,DisplayName,ServerName,Database,AdminDisplayVersion
+Get-EXLMailbox -Arbitration | FL Name, DisplayName, ServerName, Database, AdminDisplayVersion
 Search-EXLAdminAuditLog -Cmdlets Add-EXLMailboxPermission
 
 Get-exlManagementRoleAssignment -Role "Mail Recipients" -GetEffectiveUsers | Out-GridView
@@ -125,19 +125,19 @@ New-MoveRequest -Identity "INSERT_USER_ALIAS_HERE" -Remote -RemoteHostName "webm
 #License commands
 Get-MsolAccountSku
 Get-MsolUser -All -UnlicensedUsersOnly
-Get-MsolUser -All | where {$_.UsageLocation -eq $null}
+Get-MsolUser -All | where { $_.UsageLocation -eq $null }
 Set-MsolUser -UserPrincipalName "<Account>" -UsageLocation <CountryCode>
 Set-MsolUserLicense -UserPrincipalName "<Account>" -AddLicenses "IFF:STANDARDPACK"
-$x = Get-MsolUser -All -UnlicensedUsersOnly [<FilterableAttributes>]; $x | foreach {Set-MsolUserLicense -AddLicenses "IFF:STANDARDPACK"}
-Get-MsolUser -MaxResults 100 | ? {($_.Licenses | Out-String) -notlike "*PACK*"} | Select UserPrincipalName, DisplayName, Licenses | Out-GridView
-Get-MsolUser -MaxResults 100 | ?{$_.MSExchRecipientTypeDetails -eq $null} | Select DisplayName, MSExchRecipientTypeDetails | Out-GridView
-Get-MsolUser -MaxResults 100 | ? {($_.BlockCredential -eq $true)}
-Get-MsolUser -MaxResults 100 | % {get-aduser -Filter 'UserPrincipalName -eq $_.UserPrincipalName' -Properties iffCountryCode} | Select Name, iffCountryCode | Out-GridView
-Set-MsolUserLicense -UserPrincipalName $user -AddLicenses "IFF:ENTERPRISEPACK" -RemoveLicenses "IFF:STANDARDPACK" 
+$x = Get-MsolUser -All -UnlicensedUsersOnly [<FilterableAttributes>]; $x | foreach { Set-MsolUserLicense -AddLicenses "IFF:STANDARDPACK" }
+Get-MsolUser -MaxResults 100 | ? { ($_.Licenses | Out-String) -notlike "*PACK*" } | Select UserPrincipalName, DisplayName, Licenses | Out-GridView
+Get-MsolUser -MaxResults 100 | ? { $_.MSExchRecipientTypeDetails -eq $null } | Select DisplayName, MSExchRecipientTypeDetails | Out-GridView
+Get-MsolUser -MaxResults 100 | ? { ($_.BlockCredential -eq $true) }
+Get-MsolUser -MaxResults 100 | % { get-aduser -Filter 'UserPrincipalName -eq $_.UserPrincipalName' -Properties iffCountryCode } | Select Name, iffCountryCode | Out-GridView
+Set-MsolUserLicense -UserPrincipalName $user -AddLicenses "IFF:ENTERPRISEPACK" -RemoveLicenses "IFF:STANDARDPACK"
 
-Get-MsolUser -MaxResults 1000 | ? {(($_.Licenses | Out-String) -notlike "*PACK*") -and (($_.BlockCredential -ne $true) -and ($_.MSExchRecipientTypeDetails -ne $null)) } | Select DisplayName, Licenses, MSExchRecipientTypeDetails, BlockCredential | Out-GridView
-Get-MsolUser -All | ? {(($_.Licenses | Out-String) -notlike "*PACK*") -and (($_.BlockCredential -ne $true) -and ($_.MSExchRecipientTypeDetails -ne $null) -and ($_.MSExchRecipientTypeDetails -eq 1)) } | Select DisplayName, Licenses, MSExchRecipientTypeDetails, BlockCredential | Out-GridView
-$a = Get-MsolUser -All | ? {(($_.Licenses | Out-String) -notlike "*PACK*") -and (($_.BlockCredential -ne $true) -and ($_.MSExchRecipientTypeDetails -ne $null) -and ($_.MSExchRecipientTypeDetails -eq 1)) } ; $a | % {get-aduser -Filter 'UserPrincipalName -eq $_.UserPrincipalName' -Properties iffCountryCode} | Select Name, iffCountryCode | Out-GridView
+Get-MsolUser -MaxResults 1000 | ? { (($_.Licenses | Out-String) -notlike "*PACK*") -and (($_.BlockCredential -ne $true) -and ($_.MSExchRecipientTypeDetails -ne $null)) } | Select DisplayName, Licenses, MSExchRecipientTypeDetails, BlockCredential | Out-GridView
+Get-MsolUser -All | ? { (($_.Licenses | Out-String) -notlike "*PACK*") -and (($_.BlockCredential -ne $true) -and ($_.MSExchRecipientTypeDetails -ne $null) -and ($_.MSExchRecipientTypeDetails -eq 1)) } | Select DisplayName, Licenses, MSExchRecipientTypeDetails, BlockCredential | Out-GridView
+$a = Get-MsolUser -All | ? { (($_.Licenses | Out-String) -notlike "*PACK*") -and (($_.BlockCredential -ne $true) -and ($_.MSExchRecipientTypeDetails -ne $null) -and ($_.MSExchRecipientTypeDetails -eq 1)) } ; $a | % { get-aduser -Filter 'UserPrincipalName -eq $_.UserPrincipalName' -Properties iffCountryCode } | Select Name, iffCountryCode | Out-GridView
 
 #User Migration Commands
 get-exomoverequest -Batchname "MigrationService:AzulRoom" | Get-EXOMoveRequestStatistics | Select DisplayName, Identity, Status, StatusDetail, TotalMailboxSize, PercentComplete | Out-GridView
@@ -148,56 +148,56 @@ Get-EXOMoveRequest "Eddie Rosado" | Resume-EXOMoveRequest
 
 #Hybrid Migration Template Commands
 New-MoveRequest -Identity alias -remote -RemoteHostName hybridURL.company.com -TargetDeliveryDomain company.mail.onmicrosoft.com -RemoteCredential $onprem -BadItemLimit 50 –SuspendWhenReadyToComplete
-Get-MoveRequest | where {$_.status -notlike “complete*”} | Get-MoveRequestStatistics | Select DisplayName,status,percentcomplete,itemstransferred
-Get-MoveRequest | where {$_.status -notlike “complete*”} | Get-MoveRequestStatistics | Select DisplayName,status,percentcomplete,itemstransferred,BadItemsEncountered
+Get-MoveRequest | where { $_.status -notlike “complete*” } | Get-MoveRequestStatistics | Select DisplayName, status, percentcomplete, itemstransferred
+Get-MoveRequest | where { $_.status -notlike “complete*” } | Get-MoveRequestStatistics | Select DisplayName, status, percentcomplete, itemstransferred, BadItemsEncountered
 Get-MoveRequest “User, Mail” | Resume-MoveRequest
 
 # This command will complete all of the move requests that are in auto suspend:
 Get-MoveRequest -MoveStatus AutoSuspended | Resume-MoveRequest
 
 #Modern Authentication
-Get-CsOAuthConfiguration | Format-Table ClientAdal* 
-Get-EXOOrganizationConfig | Format-Table -Auto Name,OAuth*
+Get-CsOAuthConfiguration | Format-Table ClientAdal*
+Get-EXOOrganizationConfig | Format-Table -Auto Name, OAuth*
 
 #Skype for Business Hybrid User Migration
 Move-CsUser -Identity evan.kanter@iff.com -Target sipfed.online.lync.com -Credential $CloudCred -HostedMigrationOverrideUrl "https://admin1a.online.lync.com/HostedMigration/hostedmigrationservice.svc" -Confirm:$False
 Move-CsUser -Identity testuser@contoso.com -Target sipfed.online.lync.com -Credential $CloudCred -HostedMigrationOverrideUrl https://admin1a.online.lync.com/HostedMigration/hostedmigrationservice.svc
 $a = get-content 'C:\Temp\ITusers.txt'
-$a | % {Move-CsUser -Identity $_ -Credential $CloudCred -Target sipfed.online.lync.com -HostedMigrationOverrideUrl "https://admin1a.online.lync.com/HostedMigration/hostedmigrationservice.svc" -Confirm:$False}
+$a | % { Move-CsUser -Identity $_ -Credential $CloudCred -Target sipfed.online.lync.com -HostedMigrationOverrideUrl "https://admin1a.online.lync.com/HostedMigration/hostedmigrationservice.svc" -Confirm:$False }
 
 
 #Skype for Business move users from a specific OU
 Get-CsUser -OU "cn=hybridusers,cn=contoso." | Move-CsUser -Target sipfed.online.lync.com -Credentials $creds -HostedMigrationOverrideUrl https://admin1a.online.lync.com//HostedMigration/hostedmigrationservice.svc
 
 #Skype for Business Hybrid User Migration - Create a .csv list of all users to move
-Get-CsUser -Identity |Select -Property DisplayName, SipAddress, EnterpriseVoiceEnabled, Identity | Export-Csv c:\allskypeusers.csv
- 
-$creds=Get-Credential
- 
+Get-CsUser -Identity | Select -Property DisplayName, SipAddress, EnterpriseVoiceEnabled, Identity | Export-Csv c:\allskypeusers.csv
+
+$creds = Get-Credential
+
 $user_to_skype = Import-Csv C:\allskypeusers.csv
- 
+
 $user_to_skype | % { Move-CsUser -Identity $_.SipAddress -Target sipfed.online.lync.com -Credential $creds -HostedMigrationOverrideUrl https://admin1a.online.lync.com//HostedMigration/hostedmigrationservice.svc
-                     Write-host "User " $_.DisplayName " Migrated OK" -ForegroundColor Green
+  Write-host "User " $_.DisplayName " Migrated OK" -ForegroundColor Green
 }
 
 
 
 #If no server or pool was passed when the script executed, pop up a box and ask for it.
-if ($poolname -eq $null){
-[System.Reflection.Assembly]::LoadWithPartialName('Microsoft.VisualBasic') | Out-Null
-$poolname = [Microsoft.VisualBasic.Interaction]::InputBox("Enter a Pool or Server to connect to", "Remote Lync Pool or Server", "")
+if ($poolname -eq $null) {
+  [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.VisualBasic') | Out-Null
+  $poolname = [Microsoft.VisualBasic.Interaction]::InputBox("Enter a Pool or Server to connect to", "Remote Lync Pool or Server", "")
 }
 
 #Find Skype Cmdlets assigned to each role
 Get-CsAdminRole -Identity "CsHelpDesk" | Select-Object -ExpandProperty Cmdlets
 
-get-mailbox | where {($_.recipienttypedetails -ne “Discoverymailbox”) -and ($_.skuassigned -ne “True”)} | ft name,skuassign*
+get-mailbox | where { ($_.recipienttypedetails -ne “Discoverymailbox”) -and ($_.skuassigned -ne “True”) } | ft name, skuassign*
 
 get-exomailbox | Select DisplayName, Identity, PrimarySMTPAddress, MailboxMoveStatus, WhenMailboxCreated | Out-GridView
 
-get-aduser -Filter { (Title -like "VP*") -or (title -like "Vice President*" ) -or (title -like "V.P.*" ) -or (title -like "EVP*" ) -or (title -like "SVP*" )} -Properties DisplayName, Title, Mail, Office | Select DisplayName, Name, Title, UserPrincipalName, Mail, Office | Out-GridView
+get-aduser -Filter { (Title -like "VP*") -or (title -like "Vice President*" ) -or (title -like "V.P.*" ) -or (title -like "EVP*" ) -or (title -like "SVP*" ) } -Properties DisplayName, Title, Mail, Office | Select DisplayName, Name, Title, UserPrincipalName, Mail, Office | Out-GridView
 
-Get-ADUser -Identity nxm5240 -Properties directreports | Select-Object -ExpandProperty DirectReports | % {Get-Aduser $_ -Properties DisplayName, Title} | Out-GridView
+Get-ADUser -Identity nxm5240 -Properties directreports | Select-Object -ExpandProperty DirectReports | % { Get-Aduser $_ -Properties DisplayName, Title } | Out-GridView
 
 
 Set-EXOCalendarProcessing -Identity 'lavender.surface@iff.com' -AutomateProcessing AutoAccept -AddOrganizerToSubject $false –AllowConflicts $false –DeleteComments $false -DeleteSubject $false -RemovePrivateProperty $false
@@ -208,14 +208,14 @@ Get-CsOnlineUser -Filter 'DisplayName -like "*Polycom*"' | Select DisplayName, S
 
 #Manually check complexity
 Get-exlMailboxFolderPermission -identity "Palm Oil:\calendar"
-Get-E10ADPermission -Identity "Palm Oil" | ? {$_.ExtendedRights} | Select User,Identity,ExtendedRights | FT
-Get-EXLADPermission -Identity "Palm Oil" | ? {$_.ExtendedRights} | Select User,Identity,ExtendedRights | FT
-Get-EXLMailbox "Palm Oil" | ? {$_.GrantSendOnBehalfTo} | Select DisplayName, Name, GrantSendOnBehalfTo | Out-GridView
-get-EXLmailbox "Palm Oil" | Get-EXLMailboxPermission | Select User,AccessRights | FT
-get-EXLmailbox "Palm Oil" | Get-EXLMailboxPermission | ? {($_.AccessRights -like “*FullAccess*”) -and ($_.IsInherited -eq $false) -and ($_.User -notlike “NT AUTHORITY\SELF”) -and ($_.User -notlike "S-1-5*") -and ($_.User -notlike $Mailbox.PrimarySMTPAddress)} | Select User,AccessRights | FT
+Get-E10ADPermission -Identity "Palm Oil" | ? { $_.ExtendedRights } | Select User, Identity, ExtendedRights | FT
+Get-EXLADPermission -Identity "Palm Oil" | ? { $_.ExtendedRights } | Select User, Identity, ExtendedRights | FT
+Get-EXLMailbox "Palm Oil" | ? { $_.GrantSendOnBehalfTo } | Select DisplayName, Name, GrantSendOnBehalfTo | Out-GridView
+get-EXLmailbox "Palm Oil" | Get-EXLMailboxPermission | Select User, AccessRights | FT
+get-EXLmailbox "Palm Oil" | Get-EXLMailboxPermission | ? { ($_.AccessRights -like “*FullAccess*”) -and ($_.IsInherited -eq $false) -and ($_.User -notlike “NT AUTHORITY\SELF”) -and ($_.User -notlike "S-1-5*") -and ($_.User -notlike $Mailbox.PrimarySMTPAddress) } | Select User, AccessRights | FT
 
 # Office 365 Shared Group settings prior to migration
-get-adgroup -Filter * -SearchBase "OU=exGroups,OU=Exchange,OU=IFF,DC=global,DC=iff,DC=com" -SearchScope Subtree | ? {$_.GroupScope -eq "Global"} #| Select Name, GroupCategory, GroupScope | Sort Name | Out-GridView
+get-adgroup -Filter * -SearchBase "OU=exGroups,OU=Exchange,OU=IFF,DC=global,DC=iff,DC=com" -SearchScope Subtree | ? { $_.GroupScope -eq "Global" } #| Select Name, GroupCategory, GroupScope | Sort Name | Out-GridView
 get-adgroup -Identity TilburgFlavorsPackingRoomEditors | Set-ADGroup -GroupScope Universal
 
 Enable-EXLDistributionGroup -identity TechInfoUnileverEditors
@@ -223,9 +223,9 @@ Get-EXLDistributionGroup -identity TechInfoUnileverEditors | Set-EXLDistribution
 
 # Office 365 Shared Group settings prior to migration
 $a = gc C:\Temp\shared.txt
-$a | % {get-adgroup -Identity $_ | Set-ADGroup -GroupScope Universal}
-$a | % {Enable-EXLDistributionGroup -identity $_ }
-$a | % {Get-EXLDistributionGroup -identity $_ | Set-EXLDistributionGroup -HiddenFromAddressListsEnabled:$True}
+$a | % { get-adgroup -Identity $_ | Set-ADGroup -GroupScope Universal }
+$a | % { Enable-EXLDistributionGroup -identity $_ }
+$a | % { Get-EXLDistributionGroup -identity $_ | Set-EXLDistributionGroup -HiddenFromAddressListsEnabled:$True }
 
 #Fix Default Calendar permissions
 Add-EXLMailboxFolderPermission -Identity "RDNJ_GardenRm:\Calendar" -User "Calendar_Detail" -AccessRights LimitedDetails
@@ -235,11 +235,11 @@ Set-EXLMailboxFolderPermission -Identity "RDNJ_GardenRm:\Calendar" -User Default
 Get-EXLMailbox -Filter * -ResultSize Unlimited | Select DisplayName, PrimarySMTPAddress, EmailAddressPolicyEnabled | Out-GridView
 
 #Skype Rework IFF
-$Users | % {get-aduser -Identity $_ -Properties DisplayName, Mail | Select DisplayName, Mail | Sort-Object DisplayName | Export-Csv c:\temp\license.csv -NoTypeInformation -Append}
+$Users | % { get-aduser -Identity $_ -Properties DisplayName, Mail | Select DisplayName, Mail | Sort-Object DisplayName | Export-Csv c:\temp\license.csv -NoTypeInformation -Append }
 
-$users | % {Get-MsolUser -UserPrincipalName $_ } | ? {($_.Licenses | Out-String) -notlike "*PACK*"} | % {Set-MsolUserLicense -UserPrincipalName $_.UserPrincipalName -AddLicenses "IFF:STANDARDPACK"}
+$users | % { Get-MsolUser -UserPrincipalName $_ } | ? { ($_.Licenses | Out-String) -notlike "*PACK*" } | % { Set-MsolUserLicense -UserPrincipalName $_.UserPrincipalName -AddLicenses "IFF:STANDARDPACK" }
 
-get-exohostedcontentfilterpolicy | Select -ExpandProperty AllowedSenders 
+get-exohostedcontentfilterpolicy | Select -ExpandProperty AllowedSenders
 
 #DirSync Status
 Get-MSOlUser -ALL | Select-Object UserPrincipalName, LastDirSyncTime, ValidationStatus, DirSyncProvisioningErrors | Out-GridView
@@ -248,7 +248,7 @@ Get-MSOlUser -ALL | Select-Object UserPrincipalName, LastDirSyncTime, Validation
 #Conference Policies
 Grant-CsConferencingPolicy -identity "Abigail Dolan" -PolicyName BposSAllModalityNoRec
 get-csonlineuser | Select DisplayName, ConferencingPolicy | Out-GridView
-get-csonlineuser | % {Grant-CsConferencingPolicy -PolicyName BposSAllModalityNoRec}
+get-csonlineuser | % { Grant-CsConferencingPolicy -PolicyName BposSAllModalityNoRec }
 
 #Client Policies
 Set-CsClientPolicy -Identity Global -EnableIMAutoArchiving $False -EnableCallLogAutoArchiving $False
@@ -259,19 +259,19 @@ Start-EXOManagedFolderAssistant -Identity rob.wolsky@iff.com
 
 
 #find proxy addresses not in tenant
-get-aduser -Filter * -Properties ProxyAddresses | Select -ExpandProperty ProxyAddresses | ? {($_ -notlike "*iff*") -and ($_ -notlike "*X500*") -and ($_ -notlike "*tastepoint*") -and ($_ -notlike "*powderpure*")}
+get-aduser -Filter * -Properties ProxyAddresses | Select -ExpandProperty ProxyAddresses | ? { ($_ -notlike "*iff*") -and ($_ -notlike "*X500*") -and ($_ -notlike "*tastepoint*") -and ($_ -notlike "*powderpure*") }
 
 #remove automapping of shared mailbox
 Add-MailboxPermission -Identity johnsmith@contoso.onmicrosoft.com -User admin@contoso.onmicrosoft.com -AccessRights FullAccess -AutoMapping:$false
 
-#clear MigraionBatchName from user 
+#clear MigraionBatchName from user
 Set-ADUser -Identity mxr9886 -Clear msExchMailboxMoveBatchName
 
 #How Many OU's in Exchange?
 Get-EXLOrganizationalUnit -ResultSize unlimited | Measure-Object
 
 <# web.config setting for environments with more than 500 (default) OU's
-    <add key="GetListDefaultResultSize" value="1500" /> 
+    <add key="GetListDefaultResultSize" value="1500" />
   </appSettings>
 #>
 
@@ -279,17 +279,17 @@ Get-EXLOrganizationalUnit -ResultSize unlimited | Measure-Object
 Get-EXLReceiveConnector -Identity "IFFANDFE01\SharePoint 2010 Outgoing Email" | select -expandproperty remoteipranges
 
 #Check Max Send and Receive Sizes
-Get-EXOTransportConfig | fl maxreceivesize,maxsendsize
-Get-EXOMailboxPlan | fl name,maxsendsize,maxreceivesize,isdefault
+Get-EXOTransportConfig | fl maxreceivesize, maxsendsize
+Get-EXOMailboxPlan | fl name, maxsendsize, maxreceivesize, isdefault
 Get-EXOMailbox -Resultsize Unlimited | Set-Mailbox -MaxReceiveSize 150MB -MaxSendSize 150MB
-Get-EXOMailbox ROB.WOLSKY@IFF.COM | fl mailboxplan,maxsendsize,maxreceivesize
+Get-EXOMailbox ROB.WOLSKY@IFF.COM | fl mailboxplan, maxsendsize, maxreceivesize
 
 #Autodiscover Internal URI
 Get-EXLClientAccessServer | Select Identity, AutoDiscoverServiceInternalUri, AutoDiscoverSiteScope
 
 #Search Audit Log for Teams External MemberAdded
 $a = Search-EXOUnifiedAuditLog -ResultSize 5000 -StartDate 4/1/2019 -EndDate 4/8/2019 -RecordType MicrosoftTeams -Operations MemberAdded -Formatted
-$a.AuditData | Where {($_ | OUt-String) -like "*EXT*"} | ConvertFrom-Json | Select -Property UserId -ExpandProperty Members | FT UserId, DisplayName, Role, UPN
+$a.AuditData | Where { ($_ | OUt-String) -like "*EXT*" } | ConvertFrom-Json | Select -Property UserId -ExpandProperty Members | FT UserId, DisplayName, Role, UPN
 
 #Search Audit Log for Last Mailbox Access
 $a = Search-EXOUnifiedAuditLog -ResultSize 100 -StartDate 4/7/2019 -EndDate 4/8/2019 -RecordType ExchangeItem -Operations MailboxLogin -Formatted
@@ -309,16 +309,15 @@ Get-EXOMailbox nanci.prado@iff.com | Select *quota
 
 ### Distribution List Creation from Topological Sort output
 $dl = Import-Csv -Path C:\Temp\ValeryClaude.txt -Header CN, Full, Title
-ForEach ($user in [Array] $dl)
-{
+ForEach ($user in [Array] $dl) {
   Add-EXLDistributionGroupMember -Identity "IFF_KCP_Claude_All" -Member $user.CN -Confirm:$False -BypassSecurityGroupManagerCheck -DomainController naazedcpv1
-        }
+}
 
 ### Call Quality Dashboard Exports
-$serverData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name','SecondTenantDataBuilding.Second Network Name','AllStreams.Month Year' -Measures 'Measures.Total Stream Count','Measures.Avg Call Duration','Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage','Measures.Video Poor Percentage','Measures.VBSS Poor Percentage','Measures.First Feedback Rating Poor Percentage','Measures.Second Feedback Rating Poor Percentage'  -OutPutType DataTable -MonthYear '2019-08' -IsServerPair 'Client : Server'        
-$clientData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name','SecondTenantDataBuilding.Second Network Name','AllStreams.Month Year' -Measures 'Measures.Total Stream Count','Measures.Avg Call Duration','Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage','Measures.Video Poor Percentage','Measures.VBSS Poor Percentage','Measures.First Feedback Rating Poor Percentage','Measures.Second Feedback Rating Poor Percentage'  -OutPutType DataTable -MonthYear '2019-08' -IsServerPair 'Client : Client'
-$serverData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name','SecondTenantDataBuilding.Second Network Name','AllStreams.Month Year' -Measures 'Measures.Total Stream Count','Measures.Avg Call Duration','Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage','Measures.Video Poor Percentage','Measures.VBSS Poor Percentage','Measures.First Feedback Rating Poor Percentage','Measures.Second Feedback Rating Poor Percentage'  -OutPutType DataTable -IsServerPair 'Client : Server'        
-$clientData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name','SecondTenantDataBuilding.Second Network Name','AllStreams.Month Year' -Measures 'Measures.Total Stream Count','Measures.Avg Call Duration','Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage','Measures.Video Poor Percentage','Measures.VBSS Poor Percentage','Measures.First Feedback Rating Poor Percentage','Measures.Second Feedback Rating Poor Percentage'  -OutPutType DataTable -IsServerPair 'Client : Client'
+$serverData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name', 'SecondTenantDataBuilding.Second Network Name', 'AllStreams.Month Year' -Measures 'Measures.Total Stream Count', 'Measures.Avg Call Duration', 'Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage', 'Measures.Video Poor Percentage', 'Measures.VBSS Poor Percentage', 'Measures.First Feedback Rating Poor Percentage', 'Measures.Second Feedback Rating Poor Percentage'  -OutPutType DataTable -MonthYear '2019-08' -IsServerPair 'Client : Server'
+$clientData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name', 'SecondTenantDataBuilding.Second Network Name', 'AllStreams.Month Year' -Measures 'Measures.Total Stream Count', 'Measures.Avg Call Duration', 'Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage', 'Measures.Video Poor Percentage', 'Measures.VBSS Poor Percentage', 'Measures.First Feedback Rating Poor Percentage', 'Measures.Second Feedback Rating Poor Percentage'  -OutPutType DataTable -MonthYear '2019-08' -IsServerPair 'Client : Client'
+$serverData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name', 'SecondTenantDataBuilding.Second Network Name', 'AllStreams.Month Year' -Measures 'Measures.Total Stream Count', 'Measures.Avg Call Duration', 'Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage', 'Measures.Video Poor Percentage', 'Measures.VBSS Poor Percentage', 'Measures.First Feedback Rating Poor Percentage', 'Measures.Second Feedback Rating Poor Percentage'  -OutPutType DataTable -IsServerPair 'Client : Server'
+$clientData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name', 'SecondTenantDataBuilding.Second Network Name', 'AllStreams.Month Year' -Measures 'Measures.Total Stream Count', 'Measures.Avg Call Duration', 'Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage', 'Measures.Video Poor Percentage', 'Measures.VBSS Poor Percentage', 'Measures.First Feedback Rating Poor Percentage', 'Measures.Second Feedback Rating Poor Percentage'  -OutPutType DataTable -IsServerPair 'Client : Client'
 $serverData | Export-Csv c:\temp\cqdserver.csv -NoTypeInformation
 $clientData | Export-Csv c:\temp\cqdclient.csv -NoTypeInformation
 
@@ -326,17 +325,17 @@ $clientData | Export-Csv c:\temp\cqdclient.csv -NoTypeInformation
 
 ### Function to Synch Active Directory
 function Sync-Azure {
-Clear-Host
-write-host "Performing Azure Sync..." -ForegroundColor green
-$s = New-PSSession -ComputerName "USBODIRSAPPV1"
-Invoke-Command -Session $s -ScriptBlock {Import-Module "c:\Program Files\Microsoft Azure AD Sync\Bin\ADSync\ADSync.psd1"}
-Invoke-Command -Session $s -ScriptBlock {Start-ADSyncSyncCycle -PolicyType Delta}
-Remove-PSSession $s
+  Clear-Host
+  write-host "Performing Azure Sync..." -ForegroundColor green
+  $s = New-PSSession -ComputerName "USBODIRSAPPV1"
+  Invoke-Command -Session $s -ScriptBlock { Import-Module "c:\Program Files\Microsoft Azure AD Sync\Bin\ADSync\ADSync.psd1" }
+  Invoke-Command -Session $s -ScriptBlock { Start-ADSyncSyncCycle -PolicyType Delta }
+  Remove-PSSession $s
 
 }
 
 ### Enable Unified Messaging for User.
-Enable-o365UMMailbox -Identity $email -UMMailboxPolicy "BT OCM UM Default Policy" -Extensions $telephone -PIN 1234 -SendWelcomeMail $false -PINExpired $true -whatif 
+Enable-o365UMMailbox -Identity $email -UMMailboxPolicy "BT OCM UM Default Policy" -Extensions $telephone -PIN 1234 -SendWelcomeMail $false -PINExpired $true -whatif
 
 ###Compliance Search Commands
 # Need to run Remote Powershell Module in another window, cut and paste these commands
@@ -356,7 +355,7 @@ Start-ComplianceSearch -Identity "Phishing_Bdelcarlo"
 Start-ComplianceSearch -Identity "Password4534"
 Get-ComplianceSearch "Phishing_Bdelcarlo" | Select-Object Items | FL
 New-ComplianceSearchAction -SearchName "Phishing_maria2" -Purge -PurgeType HardDelete
-Get-ComplianceSearchAction 
+Get-ComplianceSearchAction
 
 ### Replication Services Health Check
 Get-EXLMailboxServer | Test-EXLMRSHealth
@@ -386,23 +385,23 @@ New-EXLMailbox -UserPrincipalName ESBE_Azul_Room@iff.com -Alias ESBE_Azul_Room -
 ### Skype Hybrid Properties - for Skype for Business Online - need rxw1401_e credentials
 $user = get-aduser -Filter 'mail -like "CAQC_Mamad*"'
 $credential = Get-Credential
-Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-DeploymentLocator'="sipfed.online.lync.com"}
-Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-FederationEnabled'=$TRUE}
-Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-InternetAccessEnabled'=$TRUE}
-Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-OptionFlags'=257}
-Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-PrimaryHomeServer'="CN=Lc Services,CN=Microsoft,CN=2:1,CN=Pools,CN=RTC Service,CN=Services,CN=Configuration,DC=global,DC=iff,DC=com"}
-Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-PrimaryUserAddress'="sip:" + $user.UserPrincipalName}
-Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-UserEnabled'=$TRUE}
-Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-UserPolicies'="{21=1, 1=3, 13=2}"}
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-DeploymentLocator' = "sipfed.online.lync.com" }
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-FederationEnabled' = $TRUE }
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-InternetAccessEnabled' = $TRUE }
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-OptionFlags' = 257 }
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-PrimaryHomeServer' = "CN=Lc Services,CN=Microsoft,CN=2:1,CN=Pools,CN=RTC Service,CN=Services,CN=Configuration,DC=global,DC=iff,DC=com" }
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-PrimaryUserAddress' = "sip:" + $user.UserPrincipalName }
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-UserEnabled' = $TRUE }
+Set-ADUser -Identity $user.samaccountname -Credential $credential -Add @{'msRTCSIP-UserPolicies' = "{21=1, 1=3, 13=2}" }
 
 Add-ADGroupMember -Identity "okta_all_iff_users_hr" -Members abc1234
 
-$pool="sippoolBLU1A11.infra.lync.com"
-Enable-CsMeetingRoom -Identity ESBE_Azul_Room@iff.com -RegistrarPool $pool -SipAddressType EmailAddress 
+$pool = "sippoolBLU1A11.infra.lync.com"
+Enable-CsMeetingRoom -Identity ESBE_Azul_Room@iff.com -RegistrarPool $pool -SipAddressType EmailAddress
 
 ### Skype Hybrid Properties - for Skype for Business Online - need rxw1401_e credentials
 $cred = Get-Credential
-set-aduser abc1234 -Replace @{'msRTCSIP-DeploymentLocator'= "SRV:"} -Server usbodcpv3 -Credential $cred
+set-aduser abc1234 -Replace @{'msRTCSIP-DeploymentLocator' = "SRV:" } -Server usbodcpv3 -Credential $cred
 
 
 ### Vaya Pharma Inventory
@@ -414,18 +413,19 @@ Get-ADUser -Filter '(Enabled -eq $false) -And (msExchRecipientTypeDetails -eq "2
 get-exomailbox rob.wolsky@iff.com | Select * | FL
 
 # Audit all Admin Role assignments in O365 Portal
-Get-MsolRole | %{$role = $_.name; Get-MsolRoleMember -RoleObjectId $_.objectid} | select @{Name="Role"; Expression = {$role}}, DisplayName, EmailAddress | Export-Csv -Path "c:\temp\AdminRoles.csv"
+Get-MsolRole | % { $role = $_.name; Get-MsolRoleMember -RoleObjectId $_.objectid } | select @{Name = "Role"; Expression = { $role } }, DisplayName, EmailAddress | Export-Csv -Path "c:\temp\AdminRoles.csv"
 
 # Determine required Role for any Cmdlet. Works both EXL and EXO
 $Perms = Get-EXLManagementRole -Cmdlet Update-DistributionGroupMember
-$perms | foreach {Get-EXLManagementRoleAssignment -Role $_.Name -Delegating $false | Format-Table -Auto Role,RoleAssigneeType,RoleAssigneeName}
+$perms | foreach { Get-EXLManagementRoleAssignment -Role $_.Name -Delegating $false | Format-Table -Auto Role, RoleAssigneeType, RoleAssigneeName }
 
 #External Sharing settings for SharePoint site incl. user OneDrive
 get-sposite -identity https://iff-my.sharepoint.com/personal/jonathan_sheehy_iff_com | Select * | FL
 get-sposite -identity https://iff-my.sharepoint.com/personal/jonathan_sheehy_iff_com | Select SharingCapability
+set-sposite https://iff-my.sharepoint.com/personal/valeria_gobo_iff_com -StorageQuota 5242880
 
 #Find the FRUTs
-Get-EXORecipient -ResultSize Unlimited | Where {($_.RecipientType -eq "UserMailbox") -AND (($_.PrimarySMTPAddress -like "*frutarom.com*")-OR ($_.PrimarySMTPAddress -like "*ibrweb.com*") -OR ($_.PrimarySMTPAddress -like "*taiga*") -OR ($_.PrimarySMTPAddress -like "*savoury*") -OR ($_.PrimarySMTPAddress -like "*nutrafur*") -OR ($_.PrimarySMTPAddress -like "*ingrenat*") -OR ($_.PrimarySMTPAddress -like "*extrakt*") -OR ($_.PrimarySMTPAddress -like "*aromco*") -OR ($_.PrimarySMTPAddress -like "*vaya*") -OR ($_.PrimarySMTPAddress -like "*enzym*"))} | Select DisplayName, RetentionPolicy, PrimarySMTPAddress, WindowsLiveID | Out-Gridview
+Get-EXORecipient -ResultSize Unlimited | Where { ($_.RecipientType -eq "UserMailbox") -AND (($_.PrimarySMTPAddress -like "*frutarom.com*") -OR ($_.PrimarySMTPAddress -like "*ibrweb.com*") -OR ($_.PrimarySMTPAddress -like "*taiga*") -OR ($_.PrimarySMTPAddress -like "*savoury*") -OR ($_.PrimarySMTPAddress -like "*nutrafur*") -OR ($_.PrimarySMTPAddress -like "*ingrenat*") -OR ($_.PrimarySMTPAddress -like "*extrakt*") -OR ($_.PrimarySMTPAddress -like "*aromco*") -OR ($_.PrimarySMTPAddress -like "*vaya*") -OR ($_.PrimarySMTPAddress -like "*enzym*")) } | Select DisplayName, RetentionPolicy, PrimarySMTPAddress, WindowsLiveID | Out-Gridview
 
 #Get all user OneDrives
 $LogFile = [Environment]::GetFolderPath("Desktop") + "\OneDriveSites.log"
@@ -434,12 +434,15 @@ Write-Host "Done! File saved as $($LogFile)."
 
 #Working on members in AppStream groups
 $g = get-content C:\temp\fleetgroups.txt
-ForEach ($grp in [Array] $g)
-{
-$c = (Get-ADGroupMember -Identity $grp).Count
-Write-Host $grp, $c
-Get-ADGroupMember -Identity $grp | Select DisplayName, UserPrincipalName | Out-GridView
+ForEach ($grp in [Array] $g) {
+  $c = (Get-ADGroupMember -Identity $grp).Count
+  Write-Host $grp, $c
+  Get-ADGroupMember -Identity $grp | Select DisplayName, UserPrincipalName | Out-GridView
 }
 
 #New Shared Mailbox
 New-EXLRemotemailbox -Shared -DomainController usbodcpv3 -Alias HilversumCorona -Name "Hilversum Corona Crisis Team" -FirstName Hilversum -LastName "Corona Crisis Team" -OnPremisesOrganizationalUnit "OU=exGROUPS,OU=EXCHANGE,OU=IFF,DC=GLOBAL,DC=IFF,DC=COM" -SamAccountName HilversumCorona -UserPrincipalName HilversumCorona@iff.com
+
+
+#FixWindowsStoreApps
+$manifest = (Get-AppxPackage -Name Microsoft.WindowsAlarms).InstallLocation + '\AppxManifest.xml' ; Add-AppxPackage -DisableDevelopmentMode -Register $manifest

@@ -427,6 +427,9 @@ set-sposite https://iff-my.sharepoint.com/personal/valeria_gobo_iff_com -Storage
 #Find the FRUTs
 Get-EXORecipient -ResultSize Unlimited | Where { ($_.RecipientType -eq "UserMailbox") -AND (($_.PrimarySMTPAddress -like "*frutarom.com*") -OR ($_.PrimarySMTPAddress -like "*ibrweb.com*") -OR ($_.PrimarySMTPAddress -like "*taiga*") -OR ($_.PrimarySMTPAddress -like "*savoury*") -OR ($_.PrimarySMTPAddress -like "*nutrafur*") -OR ($_.PrimarySMTPAddress -like "*ingrenat*") -OR ($_.PrimarySMTPAddress -like "*extrakt*") -OR ($_.PrimarySMTPAddress -like "*aromco*") -OR ($_.PrimarySMTPAddress -like "*vaya*") -OR ($_.PrimarySMTPAddress -like "*enzym*")) } | Select DisplayName, RetentionPolicy, PrimarySMTPAddress, WindowsLiveID | Out-Gridview
 
+#Find the not-FRUTs
+Get-EXORecipient -ResultSize Unlimited | Where { ($_.RecipientType -eq "UserMailbox") -AND (($_.PrimarySMTPAddress -notlike "*frutarom.com*") -OR ($_.PrimarySMTPAddress -notlike "*ibrweb.com*") -OR ($_.PrimarySMTPAddress -notlike "*taiga*") -OR ($_.PrimarySMTPAddress -notlike "*savoury*") -OR ($_.PrimarySMTPAddress -notlike "*nutrafur*") -OR ($_.PrimarySMTPAddress -notlike "*ingrenat*") -OR ($_.PrimarySMTPAddress -notlike "*extrakt*") -OR ($_.PrimarySMTPAddress -notlike "*aromco*") -OR ($_.PrimarySMTPAddress -notlike "*vaya*") -OR ($_.PrimarySMTPAddress -notlike "*enzym*")) } | Select DisplayName, RetentionPolicy, PrimarySMTPAddress, WindowsLiveID | Out-Gridview
+
 #Get all user OneDrives
 $LogFile = [Environment]::GetFolderPath("Desktop") + "\OneDriveSites.log"
 Get-SPOSite -IncludePersonalSite $true -Limit All -Filter "Url -like '-my.sharepoint.com/personal/'" | Select -ExpandProperty Url | Out-File $LogFile -Force
@@ -446,3 +449,6 @@ New-EXLRemotemailbox -Shared -DomainController usbodcpv3 -Alias HilversumCorona 
 
 #FixWindowsStoreApps
 $manifest = (Get-AppxPackage -Name Microsoft.WindowsAlarms).InstallLocation + '\AppxManifest.xml' ; Add-AppxPackage -DisableDevelopmentMode -Register $manifest
+
+#Set TLS 1.2
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12

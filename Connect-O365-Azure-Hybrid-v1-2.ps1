@@ -89,9 +89,13 @@ $EXLSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri
 Import-PSSession $EXLSession -AllowClobber -Prefix EXL
 Set-EXLAdServerSettings -ViewEntireForest $True
 
-###   Exchange Online
-$EXOSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $CloudCred -Authentication Basic -AllowRedirection
-Import-PSSession $EXOSession -AllowClobber -Prefix EXO
+
+###   Exchange Online - New Module May 2020
+Install-Module ExchangeOnlineManagement
+Import-Module ExchangeOnlineManagement
+Connect-ExchangeOnline -UserPrincipalName rob.wolsky@iff.com -ShowProgress $true
+# $EXOSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $CloudCred -Authentication Basic -AllowRedirection
+# Import-PSSession $EXOSession -AllowClobber -Prefix EXO
 
 ###   Exchange Online - Enzymotec/Vaya
 $ECred = get-credential

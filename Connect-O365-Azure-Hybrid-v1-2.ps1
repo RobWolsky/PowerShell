@@ -93,7 +93,7 @@ Set-EXLAdServerSettings -ViewEntireForest $True
 ###   Exchange Online - New Module May 2020
 Install-Module ExchangeOnlineManagement
 Import-Module ExchangeOnlineManagement
-Connect-ExchangeOnline -UserPrincipalName rob.wolsky@iff.com -ShowProgress $true
+Connect-ExchangeOnline -UserPrincipalName robert.wolsky@iff.com -ShowProgress $true
 # $EXOSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $CloudCred -Authentication Basic -AllowRedirection
 # Import-PSSession $EXOSession -AllowClobber -Prefix EXO
 
@@ -134,7 +134,8 @@ Connect-SPOService -Url "https://iff-admin.sharepoint.com"
 
 ### Skype Online
 Import-Module SkypeOnlineConnector
-$SkypeSession = New-CsOnlineSession #-Credential rob.wolsky@iff.com -OverrideAdminDomain "iff.onmicrosoft.com"
+#$Cred = Get-Credential
+$SkypeSession = New-CsOnlineSession -OverrideAdminDomain "iff.onmicrosoft.com"
 Import-PSSession $SkypeSession -AllowClobber
 
 ### Skype/Lync Local

@@ -452,3 +452,6 @@ $manifest = (Get-AppxPackage -Name Microsoft.WindowsAlarms).InstallLocation + '\
 
 #Set TLS 1.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+#Meeting Policies
+Set-CsTeamsMeetingPolicy -Identity IFFSTANDARDUSER -AllowAnonymousUsersToStartMeeting $False -AllowCloudRecording $False -AllowExternalParticipantGiveRequestControl $True -AllowTranscription $False -AutoAdmittedUsers "EveryoneInSameAndFederatedCompany" -DesignatedPresenterRoleMode "EveryoneUserOverride" -AllowPSTNUsersToBypassLobby $True

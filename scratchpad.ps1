@@ -347,7 +347,11 @@ $UserCredential = Get-Credential
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.compliance.protection.outlook.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
 Import-PSSession $Session -DisableNameChecking
 
-# Commpliance Search Commands
+# Compliance Search Commands
+$UserCredential = Get-Credential
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.compliance.protection.outlook.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
+Import-PSSession $Session -DisableNameChecking
+
 New-ComplianceSearch -Name "Phishing_Bdelcarlo" -ExchangeLocation All -ContentMatchQuery "(From:b.delcarlo@chiesi.com) AND (Subject:'e-Payment Invoice Approved Chiesi TR')"
 New-ComplianceSearch -Name "Phishing_Azabrodina" -ExchangeLocation All -ContentMatchQuery "(From:alexandra.zabrodina@iff.com) AND (Subject:'e-payment invoice approved')"
 New-ComplianceSearch -Name "Phishing_Azabrodina" -ExchangeLocation All -ContentMatchQuery "Password- 4534"
@@ -455,3 +459,15 @@ $manifest = (Get-AppxPackage -Name Microsoft.WindowsAlarms).InstallLocation + '\
 
 #Meeting Policies
 Set-CsTeamsMeetingPolicy -Identity IFFSTANDARDUSER -AllowAnonymousUsersToStartMeeting $False -AllowCloudRecording $False -AllowExternalParticipantGiveRequestControl $True -AllowTranscription $False -AutoAdmittedUsers "EveryoneInSameAndFederatedCompany" -DesignatedPresenterRoleMode "EveryoneUserOverride" -AllowPSTNUsersToBypassLobby $True
+Set-CsTeamsMeetingPolicy -Identity IFFRECORDINGUSER -AllowAnonymousUsersToStartMeeting $False -AllowCloudRecording $True -AllowExternalParticipantGiveRequestControl $True -AllowTranscription $False -AutoAdmittedUsers "EveryoneInSameAndFederatedCompany" -DesignatedPresenterRoleMode "EveryoneUserOverride" -AllowPSTNUsersToBypassLobby $True
+get-csonlineuser | Select DisplayName, UserPrincipalName, ConferencingPolicy, TeamsMeetingPolicy | Out-Gridview
+$a = get-content C:\temp\fixteams.txt
+$a | % {Grant-CsTeamsMeetingPolicy -Identity $_ -PolicyName IFFRECORDINGUSER}
+$a | % {Grant-CsConferencingPolicy -Identity $_ -PolicyName BposSAllModalityNoRec}
+
+#Graph Reporting
+$p = Invoke-GraphRequest -Uri "https://graph.microsoft.com/beta/reports/getEmailActivityUserDetail(period='D7')?$format=application/json" -Method GET -AccessToken $GraphAccessToken
+($p.Result.RawContent -split "\?\?\?")[1] | ConvertFrom-Csv | Out-Gridview
+
+$Result = Invoke-RestMethod -Uri "https://graph.microsoft.com/beta/reports/getteamsUserActivityUserCounts(period='D7')" -Headers $Headers
+$Result -split "\?\?\?" -replace "ï»¿" | ConvertFrom-CSV

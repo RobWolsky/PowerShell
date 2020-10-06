@@ -1,0 +1,12 @@
+******************* Errors *******************
+
+ ------------------------------------------- 
+
+Import-Csv : Could not find file 'C:\Users\rxw1401\github\PowerShell-2\nw_master_dl_mapping.csv'.
+At C:\Users\rxw1401\github\PowerShell-2\Poppulo_gather_objects.ps1:329 char:2
++     Import-Csv -Path $csv_mapping_file -Delimiter ';' |`
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OpenError: (:) [Import-Csv], FileNotFoundException
+    + FullyQualifiedErrorId : FileOpenFailure,Microsoft.PowerShell.Commands.ImportCsvCommand
+ 
+

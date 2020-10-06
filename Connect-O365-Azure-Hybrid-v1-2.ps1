@@ -153,7 +153,7 @@ $LyncSession = New-PSSession -ConnectionUri "https://lonwebint01.iff.com/Powersh
 Import-PSSession $LyncSession -AllowClobber
 
 ### Azure AD v2.0
-Connect-AzureAD -Credential $CloudCred
+Connect-AzureAD 
 
 
 ### Azure AD Connect (DirSync)

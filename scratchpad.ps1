@@ -340,7 +340,7 @@ Enable-o365UMMailbox -Identity $email -UMMailboxPolicy "BT OCM UM Default Policy
 ###Compliance Search Commands
 # Need to run Remote Powershell Module in another window, cut and paste these commands
 #Connect-EXOPSSession -UserPrincipalName rob.wolsky@iff.com
-Connect-IPPSSession -UserPrincipalName rob.wolsky@iff.com
+Connect-IPPSSession -UserPrincipalName robert.wolsky@iff.com
 
 #Alternate for VSCode Window
 $UserCredential = Get-Credential
@@ -353,13 +353,18 @@ $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri ht
 Import-PSSession $Session -DisableNameChecking
 
 New-ComplianceSearch -Name "Phishing_Bdelcarlo" -ExchangeLocation All -ContentMatchQuery "(From:b.delcarlo@chiesi.com) AND (Subject:'e-Payment Invoice Approved Chiesi TR')"
+New-ComplianceSearch -Name "Phishing_171678" -ExchangeLocation All -ContentMatchQuery "(From:info@ever-ride.net) AND (Subject:'SCHEDULED MAINTENANCE')"
 New-ComplianceSearch -Name "Phishing_Azabrodina" -ExchangeLocation All -ContentMatchQuery "(From:alexandra.zabrodina@iff.com) AND (Subject:'e-payment invoice approved')"
+New-ComplianceSearch -Name "Phishing_kanemaru2" -ExchangeLocation All -ContentMatchQuery 'From:kanemaru@sola-resort.com AND Subject:"System Support -Verification Now Due*"'
+New-ComplianceSearch -Name "Phishing_TASK171522" -ExchangeLocation All -ContentMatchQuery 'From:cbell@reply.e-builder.net'
 New-ComplianceSearch -Name "Phishing_Azabrodina" -ExchangeLocation All -ContentMatchQuery "Password- 4534"
-Start-ComplianceSearch -Identity "Phishing_Bdelcarlo"
-Start-ComplianceSearch -Identity "Password4534"
-Get-ComplianceSearch "Phishing_Bdelcarlo" | Select-Object Items | FL
-New-ComplianceSearchAction -SearchName "Phishing_maria2" -Purge -PurgeType HardDelete
-Get-ComplianceSearchAction
+New-ComplianceSearch -Name "Phishing_Azabrodina" -ExchangeLocation All -ContentMatchQuery "Password- 4534"
+New-ComplianceSearch -Name "Phishing_friendworks" -ExchangeLocation All -ContentMatchQuery "(From:test@friendworks.co.jp)"
+Start-ComplianceSearch -Identity "Phishing_kanemaru"
+Start-ComplianceSearch -Identity "Phishing_friendworks"
+Get-ComplianceSearch "Phishing_friendworks" | Select-Object Items | FL
+New-ComplianceSearchAction -SearchName "Phishing_friendworks" -Purge -PurgeType HardDelete
+Get-ComplianceSearchAction | Select Results
 
 ### Replication Services Health Check
 Get-EXLMailboxServer | Test-EXLMRSHealth
@@ -458,10 +463,11 @@ $manifest = (Get-AppxPackage -Name Microsoft.WindowsAlarms).InstallLocation + '\
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 #Meeting Policies
-Set-CsTeamsMeetingPolicy -Identity IFFSTANDARDUSER -AllowAnonymousUsersToStartMeeting $False -AllowCloudRecording $False -AllowExternalParticipantGiveRequestControl $True -AllowTranscription $False -AutoAdmittedUsers "EveryoneInSameAndFederatedCompany" -DesignatedPresenterRoleMode "EveryoneUserOverride" -AllowPSTNUsersToBypassLobby $True
-Set-CsTeamsMeetingPolicy -Identity IFFRECORDINGUSER -AllowAnonymousUsersToStartMeeting $False -AllowCloudRecording $True -AllowExternalParticipantGiveRequestControl $True -AllowTranscription $False -AutoAdmittedUsers "EveryoneInSameAndFederatedCompany" -DesignatedPresenterRoleMode "EveryoneUserOverride" -AllowPSTNUsersToBypassLobby $True
+Set-CsTeamsMeetingPolicy -Identity IFFSTANDARDUSER -AllowAnonymousUsersToStartMeeting $False -AllowCloudRecording $False -AllowExternalParticipantGiveRequestControl $True -AllowTranscription $False -AutoAdmittedUsers "Everyone" -DesignatedPresenterRoleMode "EveryoneUserOverride" -AllowPSTNUsersToBypassLobby $True
+Set-CsTeamsMeetingPolicy -Identity IFFRECORDINGUSER -AllowAnonymousUsersToStartMeeting $False -AllowCloudRecording $True -AllowExternalParticipantGiveRequestControl $True -AllowTranscription $False -AutoAdmittedUsers "Everyone" -DesignatedPresenterRoleMode "EveryoneUserOverride" -AllowPSTNUsersToBypassLobby $True
 get-csonlineuser | Select DisplayName, UserPrincipalName, ConferencingPolicy, TeamsMeetingPolicy | Out-Gridview
 $a = get-content C:\temp\fixteams.txt
+$a | % {Grant-CsTeamsUpgradePolicy -PolicyName UpgradeToTeams -MigrateMeetingsToTeams -Identity $_ }
 $a | % {Grant-CsTeamsMeetingPolicy -Identity $_ -PolicyName IFFRECORDINGUSER}
 $a | % {Grant-CsConferencingPolicy -Identity $_ -PolicyName BposSAllModalityNoRec}
 
@@ -471,3 +477,14 @@ $p = Invoke-GraphRequest -Uri "https://graph.microsoft.com/beta/reports/getEmail
 
 $Result = Invoke-RestMethod -Uri "https://graph.microsoft.com/beta/reports/getteamsUserActivityUserCounts(period='D7')" -Headers $Headers
 $Result -split "\?\?\?" -replace "ï»¿" | ConvertFrom-CSV
+
+#Phone System License
+$License = New-Object -TypeName Microsoft.Open.AzureAD.Model.AssignedLicense
+$License.SkuId = "e43b5b99-8dfb-405f-9987-dc307f34bcbd"
+$LicensesToAssign = New-Object -TypeName Microsoft.Open.AzureAD.Model.AssignedLicenses
+$LicensesToAssign.AddLicenses = $License
+
+$a = get-content C:\temp\fixteams.txt
+$a | %  {get-AzureADUser -SearchString $_} | Select ObjectID
+
+$a | % {Set-AzureADUserLicense -ObjectId $_ -AssignedLicenses $LicensesToAssign}

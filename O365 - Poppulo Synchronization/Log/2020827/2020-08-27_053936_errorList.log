@@ -1,0 +1,12 @@
+******************* Errors *******************
+
+ ------------------------------------------- 
+
+Get-ADGroup : Unable to contact the server. This may be because this server does not exist, it is currently down, or it does not have the Active Directory Web Services running.
+At C:\Users\rxw1401\github\PowerShell-2\Poppulo_gather_objects.ps1:337 char:26
++ ... up = $(try {Get-ADGroup -ldapfilter "(name=$($ParentGroupName))" -Pro ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ResourceUnavailable: (:) [Get-ADGroup], ADServerDownException
+    + FullyQualifiedErrorId : ActiveDirectoryServer:0,Microsoft.ActiveDirectory.Management.Commands.GetADGroup
+ 
+

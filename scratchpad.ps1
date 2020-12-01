@@ -467,8 +467,9 @@ Set-CsTeamsMeetingPolicy -Identity IFFSTANDARDUSER -AllowAnonymousUsersToStartMe
 Set-CsTeamsMeetingPolicy -Identity IFFRECORDINGUSER -AllowAnonymousUsersToStartMeeting $False -AllowCloudRecording $True -AllowExternalParticipantGiveRequestControl $True -AllowTranscription $False -AutoAdmittedUsers "Everyone" -DesignatedPresenterRoleMode "EveryoneUserOverride" -AllowPSTNUsersToBypassLobby $True
 get-csonlineuser | Select DisplayName, UserPrincipalName, ConferencingPolicy, TeamsMeetingPolicy | Out-Gridview
 $a = get-content C:\temp\fixteams.txt
-$a | % {Grant-CsTeamsUpgradePolicy -PolicyName UpgradeToTeams -MigrateMeetingsToTeams -Identity $_ }
+$a | % {Grant-CsTeamsUpgradePolicy -PolicyName UpgradeToTeams -Identity $_ }
 $a | % {Grant-CsTeamsMeetingPolicy -Identity $_ -PolicyName IFFRECORDINGUSER}
+$a | % {Grant-CsTeamsMeetingPolicy -Identity $_ -PolicyName IFFSTANDARDUSER}
 $a | % {Grant-CsConferencingPolicy -Identity $_ -PolicyName BposSAllModalityNoRec}
 
 #Graph Reporting
@@ -488,3 +489,12 @@ $a = get-content C:\temp\fixteams.txt
 $a | %  {get-AzureADUser -SearchString $_} | Select ObjectID
 
 $a | % {Set-AzureADUserLicense -ObjectId $_ -AssignedLicenses $LicensesToAssign}
+
+#Assign Phone Number and DialPlan
+$a = Import-Csv -Path C:\temp\Nov30.csv
+
+$a | % {Set-CsUser -Identity $_.ObjectID -EnterpriseVoiceEnabled $true -HostedVoiceMail $true -OnPremLineURI ("tel:" + $_.LineURI)}
+
+$a | % {Grant-CsTenantDialPlan -Identity $_.ObjectID -PolicyName $_.DialPlan}
+
+$a | % {Grant-CsOnlineVoiceRoutingPolicy -Identity $_ -PolicyName OVP-AMER-GSIP}

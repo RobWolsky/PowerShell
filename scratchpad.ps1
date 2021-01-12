@@ -497,4 +497,4 @@ $a | % {Set-CsUser -Identity $_.ObjectID -EnterpriseVoiceEnabled $true -HostedVo
 
 $a | % {Grant-CsTenantDialPlan -Identity $_.ObjectID -PolicyName $_.DialPlan}
 
-$a | % {Grant-CsOnlineVoiceRoutingPolicy -Identity $_ -PolicyName OVP-AMER-GSIP}
+$a | % {Grant-CsOnlineVoiceRoutingPolicy -Identity $_ -PolicyName $_.VoicePlan}

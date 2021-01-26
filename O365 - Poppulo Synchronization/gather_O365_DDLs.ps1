@@ -34,14 +34,14 @@ Param(
 
 ################ BEGIN - Password Encryption + Decryption ############################
 
-$location = "C:\Users\rxw1401\github\PowerShell-2\O365 - Poppulo Synchronization\Cred" #"C:\Poppulo Script\gather_objects_from_O365_ddl_capture\Cred"
+$location = "C:\Users\rxw1401\github\PowerShell\O365 - Poppulo Synchronization\Cred" #"C:\Poppulo Script\gather_objects_from_O365_ddl_capture\Cred"
 
 # ****** Once the password has been read and written to the file created within $location, comment the below line ***********
  Read-Host "Enter O365 Password:" -AsSecureString | ConvertFrom-SecureString | Out-File $location\msol_pw_encrypted.txt
 
 # Choose root location of scripts and go to this location
 
-$location = "C:\Users\rxw1401\github\PowerShell-2\O365 - Poppulo Synchronization\"
+$location = "C:\Users\rxw1401\github\PowerShell\O365 - Poppulo Synchronization\"
 cd $location | out-null
 
 $SecureOffice365Password = Get-Content $location\Cred\msol_pw_encrypted.txt | ConvertTo-SecureString

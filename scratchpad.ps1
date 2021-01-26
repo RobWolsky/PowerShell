@@ -308,10 +308,16 @@ Set-EXOMailbox nanci.prado@iff.com -ProhibitSendQuota 45GB  -ProhibitSendReceive
 Get-EXOMailbox nanci.prado@iff.com | Select *quota
 
 ### Distribution List Creation from Topological Sort output
-$dl = Import-Csv -Path C:\Temp\ValeryClaude.txt -Header CN, Full, Title
+$dl = Import-Csv -Path C:\Temp\VicVerma.txt -Header CN, Full, Title
 ForEach ($user in [Array] $dl) {
   Add-EXLDistributionGroupMember -Identity "IFF_KCP_Claude_All" -Member $user.CN -Confirm:$False -BypassSecurityGroupManagerCheck -DomainController naazedcpv1
 }
+
+### Dynamic Distribution List Creation
+New-DynamicDistributionGroup -Name "dyn_EC1_AnneChwat" -PrimarySMTPAddress "EC1_AnneChwat@iff.com" -RecipientFilter "(RecipientTypeDetails -eq 'UserMailbox') -and (CustomAttribute4 -eq 'Anne Chwat')"
+Get-Recipient -RecipientPreviewFilter (Get-DynamicDistributionGroup "dyn_EC1_VicVerma").RecipientFilter
+
+
 
 ### Call Quality Dashboard Exports
 $serverData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name', 'SecondTenantDataBuilding.Second Network Name', 'AllStreams.Month Year' -Measures 'Measures.Total Stream Count', 'Measures.Avg Call Duration', 'Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage', 'Measures.Video Poor Percentage', 'Measures.VBSS Poor Percentage', 'Measures.First Feedback Rating Poor Percentage', 'Measures.Second Feedback Rating Poor Percentage'  -OutPutType DataTable -MonthYear '2019-08' -IsServerPair 'Client : Server'
@@ -498,3 +504,6 @@ $a | % {Set-CsUser -Identity $_.ObjectID -EnterpriseVoiceEnabled $true -HostedVo
 $a | % {Grant-CsTenantDialPlan -Identity $_.ObjectID -PolicyName $_.DialPlan}
 
 $a | % {Grant-CsOnlineVoiceRoutingPolicy -Identity $_ -PolicyName $_.VoicePlan}
+
+# SET VARIABLE FOR -AD commands domain controller
+$PSDefaultParameterValues = @{"*-AD*:Server"='YOUR-CHOSEN-DC'}

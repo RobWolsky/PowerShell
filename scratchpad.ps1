@@ -316,7 +316,8 @@ ForEach ($user in [Array] $dl) {
 ### Dynamic Distribution List Creation
 New-DynamicDistributionGroup -Name "dyn_EC1_AnneChwat" -PrimarySMTPAddress "EC1_AnneChwat@iff.com" -RecipientFilter "(RecipientTypeDetails -eq 'UserMailbox') -and (CustomAttribute4 -eq 'Anne Chwat')"
 Get-Recipient -RecipientPreviewFilter (Get-DynamicDistributionGroup "dyn_EC1_VicVerma").RecipientFilter
-
+$e = import-csv "C:\Temp\MattDLs\EC2Inputs.csv"
+$e | % {New-DynamicDistributionGroup -Name ("dyn_EC2_"+$_.CondensedName) -PrimarySMTPAddress ("EC2_"+$_.SMTP) -RecipientFilter "(RecipientTypeDetails -eq 'UserMailbox') -and (CustomAttribute4 -eq '$_.Name')" -ModerationEnabled:$true -ModeratedBy donna.cornwell@iff.com,robert.wolsky@iff.com,jonathan.sheehy@iff.com}
 
 
 ### Call Quality Dashboard Exports
@@ -507,3 +508,6 @@ $a | % {Grant-CsOnlineVoiceRoutingPolicy -Identity $_ -PolicyName $_.VoicePlan}
 
 # SET VARIABLE FOR -AD commands domain controller
 $PSDefaultParameterValues = @{"*-AD*:Server"='YOUR-CHOSEN-DC'}
+
+### Poppulo. Run from Poppulo directory
+.\gather_O365_DDLs.ps1

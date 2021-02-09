@@ -1,0 +1,6 @@
+timestamp;action;object
+2021-02-08 06:42:47;Subscriber Import: 29746 subscribers ;
+2021-02-08 06:42:47;ERROR! <?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="https://api.us.newsweaver.com/includes/xml/ntsa-api.xsl" type="text/xsl"?>
+<?xml-stylesheet href="https://api.us.newsweaver.com/includes/xml/ntsa-api.css" type="text/css"?>
+<status><code>409</code><message>Add permissions is not supported in an account with simple audience management</message></status> ;

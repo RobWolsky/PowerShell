@@ -137,6 +137,7 @@ Import-Module SkypeOnlineConnector
 #$Cred = Get-Credential
 $SkypeSession = New-CsOnlineSession -OverrideAdminDomain "iff.onmicrosoft.com"
 Import-PSSession $SkypeSession -AllowClobber
+Enable-CsOnlineSessionForReconnection
 
 ### Skype/Lync Local
 #$LocalCredential = Get-Credential

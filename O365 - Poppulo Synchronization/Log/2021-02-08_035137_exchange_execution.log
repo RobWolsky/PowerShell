@@ -1,0 +1,4 @@
+timestamp;action;object
+2021-02-08 04:43:24;AD search result;@{Name=Poppulo_AzureAD_Synch_All; DisplayName=Poppulo_AzureAD_Synch_All; RecipientFilter=((RecipientType -eq 'UserMailbox') -and (-not(Name -like 'SystemMailbox{*')) -and (-not(Name -like 'CAS_{*')) -and (-not(RecipientTypeDetailsValue -eq 'MailboxPlan')) -and (-not(RecipientTypeDetailsValue -eq 'DiscoveryMailbox')) -and (-not(RecipientTypeDetailsValue -eq 'PublicFolderMailbox')) -and (-not(RecipientTypeDetailsValue -eq 'ArbitrationMailbox')) -and (-not(RecipientTypeDetailsValue -eq 'AuditLogMailbox')) -and (-not(RecipientTypeDetailsValue -eq 'AuxAuditLogMailbox')) -and (-not(RecipientTypeDetailsValue -eq 'SupervisoryReviewPolicyMailbox')) -and (-not(RecipientTypeDetailsValue -eq 'GuestMailUser'))); RecipientContainer=IFF.onmicrosoft.com}
+2021-02-08 06:09:23; UserMailbox object was null;bxa4800
+2021-02-08 06:38:19;API upload;Poppulo_AzureAD_Synch_All<->iffenterprise

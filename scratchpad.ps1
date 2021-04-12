@@ -318,7 +318,10 @@ New-DynamicDistributionGroup -Name "dyn_EC1_AnneChwat" -PrimarySMTPAddress "EC1_
 Get-Recipient -RecipientPreviewFilter (Get-DynamicDistributionGroup "dyn_EC1_VicVerma").RecipientFilter
 $e = import-csv "C:\Temp\MattDLs\EC2Inputs.csv"
 $e | % {New-DynamicDistributionGroup -Name ("dyn_EC2_"+$_.CondensedName) -PrimarySMTPAddress ("EC2_"+$_.SMTP) -RecipientFilter "(RecipientTypeDetails -eq 'UserMailbox') -and (CustomAttribute4 -eq '$_.Name')" -ModerationEnabled:$true -ModeratedBy donna.cornwell@iff.com,robert.wolsky@iff.com,jonathan.sheehy@iff.com}
+ModeratedBy ManagedBy BypassModerationFromSendersOrMembers
 
+$a = get-content -Path 'C:\temp\MattDLs\dynamic.txt'
+$a | % {Get-Recipient -ResultSize Unlimited  -RecipientPreviewFilter (Get-DynamicDistributionGroup $_).RecipientFilter | Select DisplayName, PrimarySMTPAddress | Export-Csv -Path "C:\Temp\MattDLs\$_.csv"}
 
 ### Call Quality Dashboard Exports
 $serverData = Get-CQDData -Dimensions 'FirstTenantDataBuilding.First Network Name', 'SecondTenantDataBuilding.Second Network Name', 'AllStreams.Month Year' -Measures 'Measures.Total Stream Count', 'Measures.Avg Call Duration', 'Measures.Audio Poor Stream Count', 'Measures.Audio Poor Percentage', 'Measures.Audio Poor Call Percentage', 'Measures.AppSharing Poor Percentage', 'Measures.Video Poor Percentage', 'Measures.VBSS Poor Percentage', 'Measures.First Feedback Rating Poor Percentage', 'Measures.Second Feedback Rating Poor Percentage'  -OutPutType DataTable -MonthYear '2019-08' -IsServerPair 'Client : Server'
@@ -359,7 +362,7 @@ $UserCredential = Get-Credential
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.compliance.protection.outlook.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
 Import-PSSession $Session -DisableNameChecking
 
-New-ComplianceSearch -Name "Phishing_Bdelcarlo" -ExchangeLocation All -ContentMatchQuery "(From:b.delcarlo@chiesi.com) AND (Subject:'e-Payment Invoice Approved Chiesi TR')"
+New-ComplianceSearch -Name "Sergio" -ExchangeLocation All -ContentMatchQuery "(From:kaina.lam@iff.com) AND (Subject:'RE: Friday Call')"
 New-ComplianceSearch -Name "Phishing_171678" -ExchangeLocation All -ContentMatchQuery "(From:info@ever-ride.net) AND (Subject:'SCHEDULED MAINTENANCE')"
 New-ComplianceSearch -Name "Phishing_Azabrodina" -ExchangeLocation All -ContentMatchQuery "(From:alexandra.zabrodina@iff.com) AND (Subject:'e-payment invoice approved')"
 New-ComplianceSearch -Name "Phishing_kanemaru2" -ExchangeLocation All -ContentMatchQuery 'From:kanemaru@sola-resort.com AND Subject:"System Support -Verification Now Due*"'

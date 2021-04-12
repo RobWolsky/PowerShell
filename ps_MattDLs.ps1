@@ -11,7 +11,8 @@ ForEach ($dl in [Array] $dls)
 {
 $out = @()
 $out = Get-Recipient -ResultSize Unlimited -RecipientPreviewFilter (Get-DynamicDistributionGroup $dl.Trim()).RecipientFilter
-Out-File -InputObject $out -FilePath "C:\Temp\MattDLs\$dl.txt"
+#Out-File -InputObject $out -FilePath "C:\Temp\MattDLs\$dl.txt"
+$out | Select DisplayName, PrimarySMTPAddress | Export-Csv -Path "C:\temp\MattDLs\$dl.csv"
 }
 
 $names = @()

@@ -282,7 +282,7 @@ Get-EXLReceiveConnector -Identity "IFFANDFE01\SharePoint 2010 Outgoing Email" | 
 Get-EXOTransportConfig | fl maxreceivesize, maxsendsize
 Get-EXOMailboxPlan | fl name, maxsendsize, maxreceivesize, isdefault
 Get-EXOMailbox -Resultsize Unlimited | Set-Mailbox -MaxReceiveSize 150MB -MaxSendSize 150MB
-Get-EXOMailbox ROB.WOLSKY@IFF.COM | fl mailboxplan, maxsendsize, maxreceivesize
+Get-EXOMailbox ROBERT.WOLSKY@IFF.COM | fl mailboxplan, maxsendsize, maxreceivesize
 
 #Autodiscover Internal URI
 Get-EXLClientAccessServer | Select Identity, AutoDiscoverServiceInternalUri, AutoDiscoverSiteScope
@@ -319,6 +319,7 @@ Get-Recipient -RecipientPreviewFilter (Get-DynamicDistributionGroup "dyn_EC1_Vic
 $e = import-csv "C:\Temp\MattDLs\EC2Inputs.csv"
 $e | % {New-DynamicDistributionGroup -Name ("dyn_EC2_"+$_.CondensedName) -PrimarySMTPAddress ("EC2_"+$_.SMTP) -RecipientFilter "(RecipientTypeDetails -eq 'UserMailbox') -and (CustomAttribute4 -eq '$_.Name')" -ModerationEnabled:$true -ModeratedBy donna.cornwell@iff.com,robert.wolsky@iff.com,jonathan.sheehy@iff.com}
 ModeratedBy ManagedBy BypassModerationFromSendersOrMembers
+get-mailbox -ResultSize Unlimited  | ? {$_.CustomAttribute4 = "Rustom Jilla" -AND ($_.CustomAttribute7 -eq "1" -OR $_.CustomAttribute7 -eq "2" -OR $_.CustomAttribute7 -eq "3") -AND $_.RecipientType -eq "UserMailbox"} | Out-Gridview
 
 $a = get-content -Path 'C:\temp\MattDLs\dynamic.txt'
 $a | % {Get-Recipient -ResultSize Unlimited  -RecipientPreviewFilter (Get-DynamicDistributionGroup $_).RecipientFilter | Select DisplayName, PrimarySMTPAddress | Export-Csv -Path "C:\Temp\MattDLs\$_.csv"}
@@ -375,6 +376,7 @@ Start-ComplianceSearch -Identity "Phishing_friendworks"
 Get-ComplianceSearch "Phishing_friendworks" | Select-Object Items | FL
 New-ComplianceSearchAction -SearchName "Phishing_friendworks" -Purge -PurgeType HardDelete
 Get-ComplianceSearchAction | Select Results
+Start-ManagedFolderAssistant -Identity kaina.lam@iff.com
 
 ### Replication Services Health Check
 Get-EXLMailboxServer | Test-EXLMRSHealth

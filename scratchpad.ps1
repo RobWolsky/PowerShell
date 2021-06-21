@@ -511,8 +511,15 @@ $a | % {Grant-CsTenantDialPlan -Identity $_.ObjectID -PolicyName $_.DialPlan}
 
 $a | % {Grant-CsOnlineVoiceRoutingPolicy -Identity $_ -PolicyName $_.VoicePlan}
 
+get-csonlineuser | ? {$_.OnPremLineURI} | Select FirstName, LastName, UserPrincipalName, OnPremLineURI, LineURI, TenantDialPlan, OnlineVoiceRoutingPolicy | Out-Gridview
+
 # SET VARIABLE FOR -AD commands domain controller
 $PSDefaultParameterValues = @{"*-AD*:Server"='YOUR-CHOSEN-DC'}
 
 ### Poppulo. Run from Poppulo directory
 .\gather_O365_DDLs.ps1
+
+#Settings for MSBookings
+Set-OwaMailboxPolicy "OwaMailboxPolicy-Default" -BookingsMailboxCreationEnabled:$false
+New-OwaMailboxPolicy -Name "MicrosoftBookingsEnabled"
+Set-CASMailbox -Identity "Bob.Freney@iff.com" -OwaMailboxPolicy "MicrosoftBookingsEnabled"

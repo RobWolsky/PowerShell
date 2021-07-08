@@ -523,3 +523,6 @@ $PSDefaultParameterValues = @{"*-AD*:Server"='YOUR-CHOSEN-DC'}
 Set-OwaMailboxPolicy "OwaMailboxPolicy-Default" -BookingsMailboxCreationEnabled:$false
 New-OwaMailboxPolicy -Name "MicrosoftBookingsEnabled"
 Set-CASMailbox -Identity "Bob.Freney@iff.com" -OwaMailboxPolicy "MicrosoftBookingsEnabled"
+
+#M3 to E3 swap
+Get-MsolUser -MaxResults 33000 | ? {($_.Licenses | Out-String) -like "*ENTERPRISEPACK*"} | % {Set-MsolUserLicense -UserPrincipalName $_.UserPrincipalname -AddLicenses "IFF:SPE_E3" -RemoveLicenses "IFF:ENTERPRISEPACK"}

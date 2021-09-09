@@ -525,4 +525,7 @@ New-OwaMailboxPolicy -Name "MicrosoftBookingsEnabled"
 Set-CASMailbox -Identity "Bob.Freney@iff.com" -OwaMailboxPolicy "MicrosoftBookingsEnabled"
 
 #M3 to E3 swap
-Get-MsolUser -MaxResults 33000 | ? {($_.Licenses | Out-String) -like "*ENTERPRISEPACK*"} | % {Set-MsolUserLicense -UserPrincipalName $_.UserPrincipalname -AddLicenses "IFF:SPE_E3" -RemoveLicenses "IFF:ENTERPRISEPACK"}
+Get-MsolUser -MaxResults 50000 | ? {($_.Licenses | Out-String) -like "*ENTERPRISEPACK*"} | % {Set-MsolUserLicense -UserPrincipalName $_.UserPrincipalname -AddLicenses "IFF:SPE_E3" -RemoveLicenses "IFF:ENTERPRISEPACK"}
+
+#Shared Mailbox Audit
+Search-MailboxAuditLog -Identity qalabelteam@iff.com -LogonTypes Delegate -ShowDetails -StartDate 8/1/2021 -EndDate 8/16/2021 | Where-Object {$_.Operation -eq "SoftDelete"} | Export-Csv -Path "c:\temp\qalabelteam_August2021.csv" -NoTypeInformation        

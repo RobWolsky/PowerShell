@@ -1,0 +1,99 @@
+8/19/2021 10:06:19 AM Line:596 Function Invocation: 
+8/19/2021 10:06:19 AM Line:597 Module Version: 
+ModuleType Version    Name                                ExportedCommands                                                                                                                                                     
+---------- -------    ----                                ----------------                                                                                                                                                     
+Script     1.0.0      CQDTools                            {Find-MissingBuildingsInCQD, Get-BuildingMappingFromADSites, Get-BuildingMappingFromMsftDHCP}                                                                        
+
+
+
+8/19/2021 10:06:19 AM Line:182 Connecting to current AD forest
+8/19/2021 10:06:19 AM Line:47 Could not connect to Active Directory. Please make sure that this computer is member of an Active Directory domain and you are logged on to the domain.
+8/19/2021 10:06:19 AM Line:48 Error occurred: Exception calling "GetCurrentForest" with "0" argument(s): "Current security context is not associated with an Active Directory domain or forest."
+8/19/2021 10:06:19 AM Line:49 STACKTRACE:at Get-CQDSubnetsFromAD, C:\Users\rxw1401\OneDrive - International Flavors & Fragrances Inc\Documents\WindowsPowerShell\Modules\CQDTools\1.0.0\CQDTools.psm1: line 183
+at Get-BuildingMappingFromADSites, C:\Users\rxw1401\OneDrive - International Flavors & Fragrances Inc\Documents\WindowsPowerShell\Modules\CQDTools\1.0.0\CQDTools.psm1: line 647
+at <ScriptBlock>, <No file>: line 1
+8/19/2021 10:06:40 AM Line:596 Function Invocation: 
+8/19/2021 10:06:40 AM Line:597 Module Version: 
+ModuleType Version    Name                                ExportedCommands                                                                                                                                                     
+---------- -------    ----                                ----------------                                                                                                                                                     
+Script     1.0.0      CQDTools                            {Find-MissingBuildingsInCQD, Get-BuildingMappingFromADSites, Get-BuildingMappingFromMsftDHCP}                                                                        
+
+
+
+8/19/2021 10:06:40 AM Line:182 Connecting to current AD forest
+8/19/2021 10:06:40 AM Line:47 Could not connect to Active Directory. Please make sure that this computer is member of an Active Directory domain and you are logged on to the domain.
+8/19/2021 10:06:40 AM Line:48 Error occurred: Exception calling "GetCurrentForest" with "0" argument(s): "Current security context is not associated with an Active Directory domain or forest."
+8/19/2021 10:06:40 AM Line:49 STACKTRACE:at Get-CQDSubnetsFromAD, C:\Users\rxw1401\OneDrive - International Flavors & Fragrances Inc\Documents\WindowsPowerShell\Modules\CQDTools\1.0.0\CQDTools.psm1: line 183
+at Get-BuildingMappingFromADSites, C:\Users\rxw1401\OneDrive - International Flavors & Fragrances Inc\Documents\WindowsPowerShell\Modules\CQDTools\1.0.0\CQDTools.psm1: line 647
+at <ScriptBlock>, <No file>: line 1
+8/19/2021 10:07:02 AM Line:596 Function Invocation: 
+8/19/2021 10:07:02 AM Line:597 Module Version: 
+ModuleType Version    Name                                ExportedCommands                                                                                                                                                     
+---------- -------    ----                                ----------------                                                                                                                                                     
+Script     1.0.0      CQDTools                            {Find-MissingBuildingsInCQD, Get-BuildingMappingFromADSites, Get-BuildingMappingFromMsftDHCP}                                                                        
+
+
+
+8/19/2021 10:07:02 AM Line:182 Connecting to current AD forest
+8/19/2021 10:07:02 AM Line:47 Could not connect to Active Directory. Please make sure that this computer is member of an Active Directory domain and you are logged on to the domain.
+8/19/2021 10:07:02 AM Line:48 Error occurred: Exception calling "GetCurrentForest" with "0" argument(s): "Current security context is not associated with an Active Directory domain or forest."
+8/19/2021 10:07:02 AM Line:49 STACKTRACE:at Get-CQDSubnetsFromAD, C:\Users\rxw1401\OneDrive - International Flavors & Fragrances Inc\Documents\WindowsPowerShell\Modules\CQDTools\1.0.0\CQDTools.psm1: line 183
+at Get-BuildingMappingFromADSites, C:\Users\rxw1401\OneDrive - International Flavors & Fragrances Inc\Documents\WindowsPowerShell\Modules\CQDTools\1.0.0\CQDTools.psm1: line 647
+at <ScriptBlock>, <No file>: line 1
+8/19/2021 10:07:52 AM Line:596 Function Invocation: 
+8/19/2021 10:07:52 AM Line:597 Module Version: 
+ModuleType Version    Name                                ExportedCommands                                                                                                                                                     
+---------- -------    ----                                ----------------                                                                                                                                                     
+Script     1.0.0      CQDTools                            {Find-MissingBuildingsInCQD, Get-BuildingMappingFromADSites, Get-BuildingMappingFromMsftDHCP}                                                                        
+
+
+
+8/19/2021 10:07:52 AM Line:182 Connecting to current AD forest
+8/19/2021 10:07:52 AM Line:47 Could not connect to Active Directory. Please make sure that this computer is member of an Active Directory domain and you are logged on to the domain.
+8/19/2021 10:07:52 AM Line:48 Error occurred: Exception calling "GetCurrentForest" with "0" argument(s): "Current security context is not associated with an Active Directory domain or forest."
+8/19/2021 10:07:52 AM Line:49 STACKTRACE:at Get-CQDSubnetsFromAD, C:\Users\rxw1401\OneDrive - International Flavors & Fragrances Inc\Documents\WindowsPowerShell\Modules\CQDTools\1.0.0\CQDTools.psm1: line 183
+at Get-BuildingMappingFromADSites, C:\Users\rxw1401\OneDrive - International Flavors & Fragrances Inc\Documents\WindowsPowerShell\Modules\CQDTools\1.0.0\CQDTools.psm1: line 647
+at <ScriptBlock>, <No file>: line 1
+8/19/2021 10:08:47 AM Line:596 Function Invocation: 
+8/19/2021 10:08:47 AM Line:597 Module Version: 
+ModuleType Version    Name                                ExportedCommands                                                                                                                                                     
+---------- -------    ----                                ----------------                                                                                                                                                     
+Script     1.0.0      CQDTools                            {Find-MissingBuildingsInCQD, Get-BuildingMappingFromADSites, Get-BuildingMappingFromMsftDHCP}                                                                        
+
+
+
+8/19/2021 10:08:47 AM Line:182 Connecting to current AD forest
+8/19/2021 10:08:47 AM Line:47 Could not connect to Active Directory. Please make sure that this computer is member of an Active Directory domain and you are logged on to the domain.
+8/19/2021 10:08:47 AM Line:48 Error occurred: Exception calling "GetCurrentForest" with "0" argument(s): "Current security context is not associated with an Active Directory domain or forest."
+8/19/2021 10:08:47 AM Line:49 STACKTRACE:at Get-CQDSubnetsFromAD, C:\Users\rxw1401\OneDrive - International Flavors & Fragrances Inc\Documents\WindowsPowerShell\Modules\CQDTools\1.0.0\CQDTools.psm1: line 183
+at Get-BuildingMappingFromADSites, C:\Users\rxw1401\OneDrive - International Flavors & Fragrances Inc\Documents\WindowsPowerShell\Modules\CQDTools\1.0.0\CQDTools.psm1: line 647
+at <ScriptBlock>, <No file>: line 1
+8/19/2021 10:12:01 AM Line:361 Function Invocation: 
+Key                        Value
+---                        -----
+AllADAuthorizedDHCPServers True 
+
+
+
+8/19/2021 10:12:01 AM Line:362 Module Version: 
+ModuleType Version    Name                                ExportedCommands                                                                                                                                                     
+---------- -------    ----                                ----------------                                                                                                                                                     
+Script     1.0.0      CQDTools                            {Find-MissingBuildingsInCQD, Get-BuildingMappingFromADSites, Get-BuildingMappingFromMsftDHCP}                                                                        
+
+
+
+8/19/2021 10:12:01 AM Line:384 Getting DHCP Servers from AD
+8/19/2021 10:12:12 AM Line:398 Serverlist: iff-ussb-dc01.global.iff.com iff-usny-dc01.global.iff.com iff-nlhv-dc01.global.iff.com IFF-EAME-DC01.global.iff.com iff-eame-dc02.global.iff.com iff-mxtl-dc01.global.iff.com UTIL-SGJR-PRD01.global.iff.com util-usag-prd01.global.iff.com util-dehb-prd01.global.iff.com util-usjx-prd01.global.iff.com util-arga-prd01.global.iff.com util-itml-prd01.global.iff.com util-esbe-prd01.global.iff.com util-gblo-prd01.global.iff.com util-gbhh-prd01.global.iff.com util-trge-prd01.global.iff.com util-sekn-prd01.global.iff.com util-cnhz-prd01.global.iff.com util-aulc-prd01.global.iff.com alt-krse-prd01.global.iff.com UTIL-SGCB-PRD01.global.iff.com util-rumo-prd01.global.iff.com alt-thbs-prd01.global.iff.com util-cnzj-prd01.global.iff.com alt-brrj-prd01.global.iff.com util-cnyp-prd01.global.iff.com alt-egca-prd01.global.iff.com iff-na-dc02.global.iff.com IFF-NA-DC01.global.iff.com GBHHALTAPPV1.global.iff.com idkwaltappv1.global.iff.com zaisaltappv1.global.iff.com ussfdcpv1.global.iff.com util-cobg-prd01.global.iff.com idkwdcpv1.global.iff.com mxtldcpv1.global.iff.com gbhhdcpv1.global.iff.com usnydcpv1.global.iff.com esbedcpv1.global.iff.com cnhzdcpv1.global.iff.com nlhvdcpv1.global.iff.com argadcpv1.global.iff.com nltbdcp1.global.iff.com nltbdcp2.global.iff.com frpadcpv1.global.iff.com cnshdcpv1.global.iff.com sgsgdcpv1.global.iff.com ussbdcpv1.global.iff.com idjkdcpv1.global.iff.com inchdcpv1.global.iff.com brspdcpv1.global.iff.com nlhmdcpv1.global.iff.com usbodcpv1.global.iff.com dehgdcpv1.global.iff.com trgedcpv1.global.iff.com nzakaltappv1.global.iff.com initdcpv1.global.iff.com util-sgcb-prd02.global.iff.com usjxdcpv1.global.iff.com zajodcpv1.global.iff.com frgrdcpv1.global.iff.com audndcpv1.global.iff.com uspndcpv1.global.iff.com thbsdcpv1.global.iff.com ustddcpv1.global.iff.com uspsdcpv1.global.iff.com cobgdcpv1.global.iff.com cnzgdcpv1.global.iff.com inmbdcpv1.global.iff.com brrjdcpv1.global.iff.com cnhudcpv1.global.iff.com brtbdcpv1.global.iff.com cnzjdcpv1.global.iff.com jptkdcpv1.global.iff.com UTIL-AEDU-PRD01.global.iff.com nzakdcpv1.global.iff.com uscadcpv1.global.iff.com frdidcpv1.global.iff.com deobdcpv1.global.iff.com phmadcpv1.global.iff.com jpgodcpv1.global.iff.com esbadcpv1.global.iff.com cnypdcpv1.global.iff.com rumodcpv1.global.iff.com hubpdcpv1.global.iff.com egcadcpv1.global.iff.com usubdcpv3.global.iff.com krsedcpv1.global.iff.com caqcdcpv1.global.iff.com aulcdcpv1.global.iff.com frgldcpv1.global.iff.com esmddcpv1.global.iff.com ushddcpv1.global.iff.com aedudcpv1.global.iff.com itmldcpv1.global.iff.com gblodcpv1.global.iff.com sgcbdcpv1.global.iff.com indldcpv1.global.iff.com amnaedcpv2.global.iff.com inscdcpv1.global.iff.com usbodcpv2.global.iff.com cnsidcpv1.global.iff.com plwsdcpv1.global.iff.com sisadcpv1.global.iff.com
+
+8/19/2021 10:12:12 AM Line:291 Function Invocation: 
+Key            Value                                                                                                                                                                                                           
+---            -----                                                                                                                                                                                                           
+MSftDHCPServer iff-ussb-dc01.global.iff.com iff-usny-dc01.global.iff.com iff-nlhv-dc01.global.iff.com IFF-EAME-DC01.global.iff.com iff-eame-dc02.global.iff.com iff-mxtl-dc01.global.iff.com UTIL-SGJR-PRD01.global.iff.com ...
+
+
+
+8/19/2021 10:12:12 AM Line:293 Processing iff-ussb-dc01.global.iff.com iff-usny-dc01.global.iff.com iff-nlhv-dc01.global.iff.com IFF-EAME-DC01.global.iff.com iff-eame-dc02.global.iff.com iff-mxtl-dc01.global.iff.com UTIL-SGJR-PRD01.global.iff.com util-usag-prd01.global.iff.com util-dehb-prd01.global.iff.com util-usjx-prd01.global.iff.com util-arga-prd01.global.iff.com util-itml-prd01.global.iff.com util-esbe-prd01.global.iff.com util-gblo-prd01.global.iff.com util-gbhh-prd01.global.iff.com util-trge-prd01.global.iff.com util-sekn-prd01.global.iff.com util-cnhz-prd01.global.iff.com util-aulc-prd01.global.iff.com alt-krse-prd01.global.iff.com UTIL-SGCB-PRD01.global.iff.com util-rumo-prd01.global.iff.com alt-thbs-prd01.global.iff.com util-cnzj-prd01.global.iff.com alt-brrj-prd01.global.iff.com util-cnyp-prd01.global.iff.com alt-egca-prd01.global.iff.com iff-na-dc02.global.iff.com IFF-NA-DC01.global.iff.com GBHHALTAPPV1.global.iff.com idkwaltappv1.global.iff.com zaisaltappv1.global.iff.com ussfdcpv1.global.iff.com util-cobg-prd01.global.iff.com idkwdcpv1.global.iff.com mxtldcpv1.global.iff.com gbhhdcpv1.global.iff.com usnydcpv1.global.iff.com esbedcpv1.global.iff.com cnhzdcpv1.global.iff.com nlhvdcpv1.global.iff.com argadcpv1.global.iff.com nltbdcp1.global.iff.com nltbdcp2.global.iff.com frpadcpv1.global.iff.com cnshdcpv1.global.iff.com sgsgdcpv1.global.iff.com ussbdcpv1.global.iff.com idjkdcpv1.global.iff.com inchdcpv1.global.iff.com brspdcpv1.global.iff.com nlhmdcpv1.global.iff.com usbodcpv1.global.iff.com dehgdcpv1.global.iff.com trgedcpv1.global.iff.com nzakaltappv1.global.iff.com initdcpv1.global.iff.com util-sgcb-prd02.global.iff.com usjxdcpv1.global.iff.com zajodcpv1.global.iff.com frgrdcpv1.global.iff.com audndcpv1.global.iff.com uspndcpv1.global.iff.com thbsdcpv1.global.iff.com ustddcpv1.global.iff.com uspsdcpv1.global.iff.com cobgdcpv1.global.iff.com cnzgdcpv1.global.iff.com inmbdcpv1.global.iff.com brrjdcpv1.global.iff.com cnhudcpv1.global.iff.com brtbdcpv1.global.iff.com cnzjdcpv1.global.iff.com jptkdcpv1.global.iff.com UTIL-AEDU-PRD01.global.iff.com nzakdcpv1.global.iff.com uscadcpv1.global.iff.com frdidcpv1.global.iff.com deobdcpv1.global.iff.com phmadcpv1.global.iff.com jpgodcpv1.global.iff.com esbadcpv1.global.iff.com cnypdcpv1.global.iff.com rumodcpv1.global.iff.com hubpdcpv1.global.iff.com egcadcpv1.global.iff.com usubdcpv3.global.iff.com krsedcpv1.global.iff.com caqcdcpv1.global.iff.com aulcdcpv1.global.iff.com frgldcpv1.global.iff.com esmddcpv1.global.iff.com ushddcpv1.global.iff.com aedudcpv1.global.iff.com itmldcpv1.global.iff.com gblodcpv1.global.iff.com sgcbdcpv1.global.iff.com indldcpv1.global.iff.com amnaedcpv2.global.iff.com inscdcpv1.global.iff.com usbodcpv2.global.iff.com cnsidcpv1.global.iff.com plwsdcpv1.global.iff.com sisadcpv1.global.iff.com
+8/19/2021 10:12:12 AM Line:400 Found 0 scopes
+8/19/2021 10:12:12 AM Line:47 No DHCP scopes found, please check for previous errors. Possible reasons: Not running locally on the DHCP server and no server name or -AllADAuthorizedDHCPServers parameter provided, or no permissions to read, or no connectivity to DHCP servers.
+8/19/2021 10:12:12 AM Line:48 Error occurred: 
+8/19/2021 10:12:12 AM Line:49 STACKTRACE:

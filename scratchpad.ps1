@@ -529,3 +529,7 @@ Get-MsolUser -MaxResults 50000 | ? {($_.Licenses | Out-String) -like "*ENTERPRIS
 
 #Shared Mailbox Audit
 Search-MailboxAuditLog -Identity qalabelteam@iff.com -LogonTypes Delegate -ShowDetails -StartDate 8/1/2021 -EndDate 8/16/2021 | Where-Object {$_.Operation -eq "SoftDelete"} | Export-Csv -Path "c:\temp\qalabelteam_August2021.csv" -NoTypeInformation        
+
+
+#DL Filters
+New-DynamicDistributionGroup -Name "dyn_HR_USEmployees_N&B" -PrimarySMTPAddress "dyn_HR_USEmpNBS@iff.com" -RecipientFilter "(RecipientTypeDetails -eq 'UserMailbox') -and (CustomAttribute2 -eq 'N&B') -and (CustomAttribute13 -eq 'US') -and ((Title -ne 'Outsourced Services') -and (Title -notlike 'Intern*') -and (Title -notlike 'Temp*') -and (Title -ne 'Independ. Contractor') -and (Title -ne 'Law Intern') -and (Title -ne 'Legal Intern'))"
